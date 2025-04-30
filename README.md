@@ -96,7 +96,7 @@ Procrastinot is a full-stack productivity web application designed to help users
  
 - **Apr 24**: Submitting the low-fid wireframe for the capstone
 - **Apr 25**: Submitting the high-fid wireframe for the capstone
-- **Apr 36**:  Creating the Repo for the capstone and creating the README.md file
+- **Apr 26**:  Creating the Repo for the capstone and creating the README.md file
 
 ## **Week 2 (Apr 28 – May 4) – Core App Skeleton + Pomodoro + Auth**
 
