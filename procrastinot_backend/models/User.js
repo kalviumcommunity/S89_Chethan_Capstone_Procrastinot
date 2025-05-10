@@ -36,14 +36,20 @@ const userSchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-
+// Pre-save hook for password hashing
 userSchema.pre('save', async function (next) {
   if (!this.isModified('password') || !this.password) return next();
-  this.password = await bcrypt.hash(this.password, 10);
+
+  // Check if the password is already hashed to prevent double hashing
+  const isHashed = this.password.startsWith('$2a$') || this.password.startsWith('$2b$');
+  if (!isHashed) {
+    this.password = await bcrypt.hash(this.password, 10);
+  }
+
   next();
 });
 
-
+// Method to compare passwords
 userSchema.methods.comparePassword = async function (password) {
   return await bcrypt.compare(password, this.password);
 };
