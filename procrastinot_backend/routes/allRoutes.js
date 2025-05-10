@@ -1,22 +1,40 @@
 const express = require("express");
 const router = express.Router();
 
-// Import route modules
-const userRoutes = require("./get-routes/userRoutes");
-const taskRoutes = require("./get-routes/taskRoutes");
-const skillRoutes = require("./get-routes/skillRoutes");
-const skillProgressRoutes = require("./get-routes/skillProgressRoutes");
-const moodRoutes = require("./get-routes/moodRoutes");
-const challengeRoutes = require("./get-routes/challengeRoutes");
-const pomodoroRoutes = require("./get-routes/pomodoroRoutes");
+// GET Routes
+const userGetRoutes = require("./get-routes/userRoutes");
+const taskGetRoutes = require("./get-routes/taskRoutes");
+const skillGetRoutes = require("./get-routes/skillRoutes");
+const skillProgressGetRoutes = require("./get-routes/skillProgressRoutes");
+const moodGetRoutes = require("./get-routes/moodRoutes");
+const challengeGetRoutes = require("./get-routes/challengeRoutes");
+const pomodoroGetRoutes = require("./get-routes/pomodoroRoutes");
 
-// Use routes with API path prefixes
-router.use("/users", userRoutes);
-router.use("/tasks", taskRoutes);
-router.use("/skills", skillRoutes);
-router.use("/skill-progress", skillProgressRoutes);
-router.use("/moods", moodRoutes);
-router.use("/challenges", challengeRoutes);
-router.use("/pomodoro", pomodoroRoutes);
+// POST Routes
+const userPostRoutes = require("./post-route/userRoutes");
+const taskPostRoutes = require("./post-route/taskRoutes");
+const skillPostRoutes = require("./post-route/skillRoutes");
+const skillProgressPostRoutes = require("./post-route/skillProgressRoutes");
+const moodPostRoutes = require("./post-route/moodRoutes");
+const challengePostRoutes = require("./post-route/challengeRoutes");
+const pomodoroPostRoutes = require("./post-route/pomodoroRoutes");
+
+// Mount GET routes
+router.use("/users", userGetRoutes);
+router.use("/tasks", taskGetRoutes);
+router.use("/skills", skillGetRoutes);
+router.use("/skill-progress", skillProgressGetRoutes);
+router.use("/moods", moodGetRoutes);
+router.use("/challenges", challengeGetRoutes);
+router.use("/pomodoro", pomodoroGetRoutes);
+
+// Mount POST routes
+router.use("/users", userPostRoutes);
+router.use("/tasks", taskPostRoutes);
+router.use("/skills", skillPostRoutes);
+router.use("/skill-progress", skillProgressPostRoutes);
+router.use("/moods", moodPostRoutes);
+router.use("/challenges", challengePostRoutes);
+router.use("/pomodoro", pomodoroPostRoutes);
 
 module.exports = router;
