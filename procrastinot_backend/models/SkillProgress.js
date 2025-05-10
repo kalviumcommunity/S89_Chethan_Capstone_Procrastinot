@@ -1,36 +1,35 @@
-// models/SkillProgress.js
-
 const mongoose = require('mongoose');
 
 const skillProgressSchema = new mongoose.Schema({
-  user: {
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
   },
-  skill: {
-    type: String, // e.g., "Coding", "Speaking"
+  skillId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Skill',
     required: true,
   },
   subtopic: {
-    type: String, // e.g., "HTML", "Python"
+    type: String, 
     required: true,
+    trim: true,
   },
   progress: {
-    type: Number, // 0 to 100%
+    type: Number, 
     default: 0,
     min: 0,
     max: 100,
   },
-  lastAccessed: {
-    type: Date,
-    default: Date.now,
-  },
   streak: {
-    type: Number, // Number of consecutive active days
+    type: Number, 
     default: 0,
-  }
-});
+  },
+  lastStudiedAt: {
+    type: Date, 
+  },
+}, { timestamps: true }); 
 
 const SkillProgress = mongoose.model('SkillProgress', skillProgressSchema);
 

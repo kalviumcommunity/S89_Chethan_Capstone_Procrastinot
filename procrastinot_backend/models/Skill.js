@@ -1,5 +1,3 @@
-// models/Skill.js
-
 const mongoose = require('mongoose');
 
 const skillSchema = new mongoose.Schema({
@@ -8,38 +6,47 @@ const skillSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
+  name: {
+    type: String,
+    required: true,
+    trim: true,
+  },
+  description: {
+    type: String,
+    trim: true,
+  },
   category: {
     type: String,
-    required: true, // e.g., "Coding", "Speaking"
+    required: true, 
   },
   subTopic: {
     type: String,
-    required: true, // e.g., "HTML", "Python"
+  },
+  level: {
+    type: String,
+    enum: ["Beginner", "Intermediate", "Advanced"],
+    default: "Beginner",
   },
   content: {
-    type: String, // Markdown or plain text for in-app learning
+    type: String, 
   },
   progress: {
     type: Number,
-    default: 0, // percentage completion
+    default: 0, 
     min: 0,
     max: 100,
   },
   streak: {
     type: Number,
-    default: 0, // number of consecutive days learning this skill
+    default: 0, 
   },
   lastStudiedAt: {
-    type: Date,
+    type: Date, 
   },
   aiSuggestions: [{
-    type: String, // e.g., "Next: Learn CSS Grid"
+    type: String, 
   }],
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  }
-});
+}, { timestamps: true }); 
 
 const Skill = mongoose.model('Skill', skillSchema);
 

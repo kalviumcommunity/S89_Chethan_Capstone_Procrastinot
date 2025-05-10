@@ -1,44 +1,49 @@
-import mongoose from "mongoose";
+const mongoose = require('mongoose');
 
-const PomodoroSessionSchema = new mongoose.Schema({
-  user: {
+const pomodoroSessionSchema = new mongoose.Schema({
+  userId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "User",
+    ref: 'User',
     required: true,
   },
   startTime: {
     type: Date,
+    default: Date.now,
     required: true,
   },
   endTime: {
     type: Date,
-    required: true,
   },
   duration: {
-    type: Number, // duration in minutes
+    type: Number, 
     required: true,
   },
-  task: {
+  status: {
+    type: String,
+    enum: ['Completed', 'In Progress', 'Paused'],
+    default: 'In Progress',
+  },
+  taskId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Task",
-    default: null, // not always linked to a specific task
+    ref: 'Task',
+    default: null, 
   },
   moodBefore: {
     type: String,
-    enum: ["Happy", "Neutral", "Sad", "Anxious", "Excited"],
-    default: "Neutral",
+    enum: ['Happy', 'Neutral', 'Sad', 'Anxious', 'Excited'],
+    default: 'Neutral',
   },
   moodAfter: {
     type: String,
-    enum: ["Happy", "Neutral", "Sad", "Anxious", "Excited"],
-    default: "Neutral",
+    enum: ['Happy', 'Neutral', 'Sad', 'Anxious', 'Excited'],
+    default: 'Neutral',
   },
   notes: {
     type: String,
     trim: true,
-  }
-}, {
-  timestamps: true
-});
+  },
+}, { timestamps: true }); 
 
-export default mongoose.model("PomodoroSession", PomodoroSessionSchema);
+const PomodoroSession = mongoose.model('PomodoroSession', pomodoroSessionSchema);
+
+module.exports = PomodoroSession;

@@ -1,5 +1,3 @@
-// models/Task.js
-
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
@@ -42,16 +40,12 @@ const taskSchema = new mongoose.Schema({
     default: 0,
   },
   aiBreakdown: [{
-    type: String, // stores list of AI-generated sub-tasks
+    type: String,
   }],
   attachmentUrl: {
-    type: String, // file uploads
+    type: String, 
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  }
-});
+}, { timestamps: true }); 
 
 const Task = mongoose.model('Task', taskSchema);
 
