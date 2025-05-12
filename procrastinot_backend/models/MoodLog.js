@@ -1,3 +1,4 @@
+//MoodLog.js
 const mongoose = require('mongoose');
 
 const moodLogSchema = new mongoose.Schema({
