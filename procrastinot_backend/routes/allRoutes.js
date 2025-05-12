@@ -19,6 +19,15 @@ const moodPostRoutes = require("./post-route/moodRoutes");
 const challengePostRoutes = require("./post-route/challengeRoutes");
 const pomodoroPostRoutes = require("./post-route/pomodoroRoutes");
 
+// PUT Routes
+const userPutRoutes = require("./put-routes/userRoutes");
+const taskPutRoutes = require("./put-routes/taskRoutes");
+const skillPutRoutes = require("./put-routes/skillRoutes");
+const skillProgressPutRoutes = require("./put-routes/skillProgressRoutes");
+const moodPutRoutes = require("./put-routes/moodRoutes");
+const challengePutRoutes = require("./put-routes/challengeRoutes");
+const pomodoroPutRoutes = require("./put-routes/pomodoroRoutes");
+
 // Mount GET routes
 router.use("/users", userGetRoutes);
 router.use("/tasks", taskGetRoutes);
@@ -36,5 +45,15 @@ router.use("/skill-progress", skillProgressPostRoutes);
 router.use("/moods", moodPostRoutes);
 router.use("/challenges", challengePostRoutes);
 router.use("/pomodoro", pomodoroPostRoutes);
+
+
+// Mount PUT routes
+router.use("/users", userPutRoutes);
+router.use("/tasks", taskPutRoutes);
+router.use("/skills", skillPutRoutes);
+router.use("/skill-progress", skillProgressPutRoutes);
+router.use("/moods", moodPutRoutes);
+router.use("/challenges", challengePutRoutes);
+router.use("/pomodoro", pomodoroPutRoutes);
 
 module.exports = router;
