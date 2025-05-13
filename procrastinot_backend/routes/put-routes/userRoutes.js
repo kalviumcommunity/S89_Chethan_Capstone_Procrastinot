@@ -2,10 +2,9 @@ const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
 
-// Update a user by ID
+// ✅ Update a user by ID
 router.put("/:id", async (req, res) => {
   try {
-    // Validate user ID
     if (!req.params.id) {
       return res.status(400).json({
         message: 'User ID is required',
@@ -13,7 +12,6 @@ router.put("/:id", async (req, res) => {
       });
     }
 
-    // Check if user exists
     const existingUser = await User.findById(req.params.id);
     if (!existingUser) {
       return res.status(404).json({

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const MoodLog = require("../../models/MoodLog");
 
-// Update a mood log entry by ID
+// ✅ Update a mood log by ID
 router.put("/:id", async (req, res) => {
   try {
     const updatedMood = await MoodLog.findByIdAndUpdate(req.params.id, req.body, { new: true });

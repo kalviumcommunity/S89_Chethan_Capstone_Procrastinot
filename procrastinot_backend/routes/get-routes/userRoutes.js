@@ -1,4 +1,3 @@
-//get-routes/userRoutes.js
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
@@ -14,7 +13,7 @@ router.get("/", async (req, res) => {
       .populate('pomodoroSessions')
       .populate('moodLogs')
       .populate('completedChallenges');
-    
+
     if (!users || users.length === 0) {
       return res.status(404).json({
         message: 'No users found',
@@ -24,6 +23,7 @@ router.get("/", async (req, res) => {
 
     res.status(200).json({
       message: 'Users retrieved successfully',
+      count: users.length,
       users: users
     });
   } catch (err) {

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Skill = require("../../models/Skill");
 
-// Update a skill by ID
+// ✅ Update a skill by ID
 router.put("/:id", async (req, res) => {
   try {
     const updatedSkill = await Skill.findByIdAndUpdate(req.params.id, req.body, { new: true });

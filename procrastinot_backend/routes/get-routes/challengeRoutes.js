@@ -1,4 +1,3 @@
-//get-routes/challengeRouter.js
 const express = require("express");
 const router = express.Router();
 const Challenge = require("../../models/Challenge");
@@ -10,7 +9,7 @@ router.get("/", async (req, res) => {
       .populate('participants.user')
       .populate('tasks');
     
-    if (!challenges) {
+    if (!challenges || challenges.length === 0) {
       return res.status(404).json({
         message: 'No challenges found',
         error: 'NOT_FOUND'
@@ -19,6 +18,7 @@ router.get("/", async (req, res) => {
 
     res.status(200).json({
       message: 'Challenges retrieved successfully',
+      count: challenges.length,
       challenges: challenges
     });
   } catch (err) {
@@ -34,9 +34,8 @@ router.get("/", async (req, res) => {
 router.get("/difficulty/:level", async (req, res) => {
   try {
     const { level } = req.params;
-    
-    // Validate difficulty level
     const validLevels = ['Easy', 'Medium', 'Hard'];
+
     if (!validLevels.includes(level)) {
       return res.status(400).json({
         message: 'Invalid difficulty level',
@@ -56,6 +55,7 @@ router.get("/difficulty/:level", async (req, res) => {
 
     res.status(200).json({
       message: 'Challenges retrieved successfully',
+      count: challenges.length,
       challenges: challenges
     });
   } catch (err) {

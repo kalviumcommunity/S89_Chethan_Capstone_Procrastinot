@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const PomodoroSession = require("../../models/PomodoroSession");
 
-// Update a pomodoro session by ID
+// ✅ Update a pomodoro session by ID
 router.put("/:id", async (req, res) => {
   try {
     const updatedSession = await PomodoroSession.findByIdAndUpdate(req.params.id, req.body, { new: true });
