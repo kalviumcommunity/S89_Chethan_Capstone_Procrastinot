@@ -1,4 +1,3 @@
-//Task.js
 const mongoose = require('mongoose');
 
 const taskSchema = new mongoose.Schema({
@@ -46,6 +45,18 @@ const taskSchema = new mongoose.Schema({
   attachmentUrl: {
     type: String, 
   },
+  relatedSkills: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Skill'
+  }],
+  challenge: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Challenge'
+  },
+  pomodoroSessions: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PomodoroSession'
+  }]
 }, { timestamps: true }); 
 
 const Task = mongoose.model('Task', taskSchema);

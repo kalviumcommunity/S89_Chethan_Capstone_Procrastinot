@@ -6,7 +6,14 @@ const User = require("../../models/User");
 // ✅ Get all users (for admin or testing)
 router.get("/", async (req, res) => {
   try {
-    const users = await User.find().select("-password"); // exclude passwords
+    const users = await User.find()
+      .select("-password")
+      .populate('tasks')
+      .populate('skills')
+      .populate('skillProgress')
+      .populate('pomodoroSessions')
+      .populate('moodLogs')
+      .populate('completedChallenges');
     res.status(200).json(users);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch users." });

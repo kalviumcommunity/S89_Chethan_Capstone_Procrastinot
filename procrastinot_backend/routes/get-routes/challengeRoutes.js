@@ -6,7 +6,9 @@ const Challenge = require("../../models/Challenge");
 // ✅ Get all challenges
 router.get("/", async (req, res) => {
   try {
-    const challenges = await Challenge.find();
+    const challenges = await Challenge.find()
+      .populate('participants.user')
+      .populate('tasks');
     res.status(200).json(challenges);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch challenges." });

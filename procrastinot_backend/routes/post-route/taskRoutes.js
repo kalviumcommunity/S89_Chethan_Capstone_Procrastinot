@@ -11,33 +11,38 @@ router.post('/', async (req, res) => {
       title,
       description,
       status,
+      relatedSkills,
+      challenge,
       moodBefore,
       pomodoroCount,
       aiBreakdown,
       attachmentURL,
     } = req.body;
 
-    // Validate required fields
-    if (!userId || !title) {
-      return res.status(400).json({ message: 'userId and title are required' });
-    }
-
     const newTask = new Task({
       userId,
       title,
       description,
-      status: status || 'Pending',
+      status,
+      relatedSkills,
+      challenge,
       moodBefore,
-      pomodoroCount: pomodoroCount || 0,
+      pomodoroCount,
       aiBreakdown,
       attachmentURL,
     });
 
-    await newTask.save();
-    res.status(201).json({ message: 'Task created successfully ✅', task: newTask });
+    const savedTask = await newTask.save();
 
+    // Update user's tasks array
+    await User.findByIdAndUpdate(
+      userId,
+      { $push: { tasks: savedTask._id } }
+    );
+
+    res.status(201).json(savedTask);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to create task ❌', error: err.message });
+    res.status(500).json({ error: "Failed to create task." });
   }
 });
 

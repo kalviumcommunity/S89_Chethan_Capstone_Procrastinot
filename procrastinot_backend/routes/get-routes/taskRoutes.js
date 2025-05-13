@@ -6,7 +6,10 @@ const Task = require("../../models/Task");
 // ✅ Get all tasks for a user
 router.get("/user/:userId", async (req, res) => {
   try {
-    const tasks = await Task.find({ userId: req.params.userId });
+    const tasks = await Task.find({ userId: req.params.userId })
+      .populate('relatedSkills')
+      .populate('challenge')
+      .populate('pomodoroSessions');
     res.status(200).json(tasks);
   } catch (err) {
     res.status(500).json({ error: "Failed to fetch tasks." });
