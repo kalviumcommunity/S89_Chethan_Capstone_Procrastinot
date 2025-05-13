@@ -37,6 +37,28 @@ const challengeSchema = new mongoose.Schema({
     type: Number, 
     default: 24,
   },
+  participants: [{
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User'
+    },
+    status: {
+      type: String,
+      enum: ['In Progress', 'Completed', 'Failed'],
+      default: 'In Progress'
+    },
+    startedAt: {
+      type: Date,
+      default: Date.now
+    },
+    completedAt: {
+      type: Date
+    }
+  }],
+  tasks: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Task'
+  }]
 }, { timestamps: true }); 
 
 const Challenge = mongoose.model('Challenge', challengeSchema);
