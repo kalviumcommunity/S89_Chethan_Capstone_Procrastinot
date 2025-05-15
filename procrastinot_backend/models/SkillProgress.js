@@ -1,4 +1,4 @@
-//SkillProgress.js
+//models/SkillProgress.js
 const mongoose = require('mongoose');
 
 const skillProgressSchema = new mongoose.Schema({

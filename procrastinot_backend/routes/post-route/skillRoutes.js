@@ -1,4 +1,4 @@
-//post-route/skillRoutes.js
+//routes/post-route/skillRoutes.js
 const express = require('express');
 const Skill = require('../../models/Skill');
 const router = express.Router();

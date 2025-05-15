@@ -1,77 +1,58 @@
 const express = require("express");
 const router = express.Router();
+const authMiddleware = require("../middleware/authMiddleware"); // Import JWT middleware
 
-// GET Routes
-const userGetRoutes = require("./get-routes/userRoutes");
-const taskGetRoutes = require("./get-routes/taskRoutes");
-const skillGetRoutes = require("./get-routes/skillRoutes");
-const skillProgressGetRoutes = require("./get-routes/skillProgressRoutes");
-const moodGetRoutes = require("./get-routes/moodRoutes");
-const challengeGetRoutes = require("./get-routes/challengeRoutes");
-const pomodoroGetRoutes = require("./get-routes/pomodoroRoutes");
+// =========================
+// ✅ PUBLIC ROUTES (NO AUTH)
+// =========================
 
-// POST Routes
-const userPostRoutes = require("./post-route/userRoutes");
-const taskPostRoutes = require("./post-route/taskRoutes");
-const skillPostRoutes = require("./post-route/skillRoutes");
-const skillProgressPostRoutes = require("./post-route/skillProgressRoutes");
-const moodPostRoutes = require("./post-route/moodRoutes");
-const challengePostRoutes = require("./post-route/challengeRoutes");
-const pomodoroPostRoutes = require("./post-route/pomodoroRoutes");
-
-// PUT Routes
-const userPutRoutes = require("./put-routes/userRoutes");
-const taskPutRoutes = require("./put-routes/taskRoutes");
-const skillPutRoutes = require("./put-routes/skillRoutes");
-const skillProgressPutRoutes = require("./put-routes/skillProgressRoutes");
-const moodPutRoutes = require("./put-routes/moodRoutes");
-const challengePutRoutes = require("./put-routes/challengeRoutes");
-const pomodoroPutRoutes = require("./put-routes/pomodoroRoutes");
-
-// DELETE Routes
-const userDeleteRoutes = require("./delete-routes/userRoutes");
-const taskDeleteRoutes = require("./delete-routes/taskRoutes");
-const skillDeleteRoutes = require("./delete-routes/skillRoutes");
-const skillProgressDeleteRoutes = require("./delete-routes/skillProgressRoutes");
-const moodDeleteRoutes = require("./delete-routes/moodRoutes");
-const challengeDeleteRoutes = require("./delete-routes/challengeRoutes");
-const pomodoroDeleteRoutes = require("./delete-routes/pomodoroRoutes");
-
-// Mount GET routes
-router.use("/users", userGetRoutes);
-router.use("/tasks", taskGetRoutes);
-router.use("/skills", skillGetRoutes);
-router.use("/skill-progress", skillProgressGetRoutes);
-router.use("/moods", moodGetRoutes);
-router.use("/challenges", challengeGetRoutes);
-router.use("/pomodoro", pomodoroGetRoutes);
-
-// Mount POST routes
-router.use("/users", userPostRoutes);
-router.use("/tasks", taskPostRoutes);
-router.use("/skills", skillPostRoutes);
-router.use("/skill-progress", skillProgressPostRoutes);
-router.use("/moods", moodPostRoutes);
-router.use("/challenges", challengePostRoutes);
-router.use("/pomodoro", pomodoroPostRoutes);
+// User routes: register and login should remain public
+const userPostRoutes = require("./post-route/userRoutes"); // Register & Login
+const userGetRoutes = require("./get-routes/userRoutes");  // Optional public GET routes like /me
 
 
-// Mount PUT routes
-router.use("/users", userPutRoutes);
-router.use("/tasks", taskPutRoutes);
-router.use("/skills", skillPutRoutes);
-router.use("/skill-progress", skillProgressPutRoutes);
-router.use("/moods", moodPutRoutes);
-router.use("/challenges", challengePutRoutes);
-router.use("/pomodoro", pomodoroPutRoutes);
+router.use("/users", userPostRoutes); // Login & Register (no auth required)
+router.use("/users", userGetRoutes);  // Optional: GET /users/public etc.
+router.use("/user/:id", require("./get-routes/userRoutes")); // Get user by ID (auth required))
 
-// Mount DELETE routes
-router.use("/users", userDeleteRoutes);
-router.use("/tasks", taskDeleteRoutes);
-router.use("/skills", skillDeleteRoutes);
-router.use("/skill-progress", skillProgressDeleteRoutes);
-router.use("/moods", moodDeleteRoutes);
-router.use("/challenges", challengeDeleteRoutes);
-router.use("/pomodoro", pomodoroDeleteRoutes);
+// ============================
+// ✅ PROTECTED ROUTES (AUTH)
+// ============================
+router.use(authMiddleware); // Everything after this line requires a valid JWT
+
+// ✅ GET Routes (Authenticated)
+
+router.use("/tasks", require("./get-routes/taskRoutes"));
+router.use("/skills", require("./get-routes/skillRoutes"));
+router.use("/skill-progress", require("./get-routes/skillProgressRoutes"));
+router.use("/moods", require("./get-routes/moodRoutes"));
+router.use("/challenges", require("./get-routes/challengeRoutes"));
+router.use("/pomodoro", require("./get-routes/pomodoroRoutes"));
+
+// ✅ POST Routes (Authenticated)
+router.use("/tasks", require("./post-route/taskRoutes"));
+router.use("/skills", require("./post-route/skillRoutes"));
+router.use("/skill-progress", require("./post-route/skillProgressRoutes"));
+router.use("/moods", require("./post-route/moodRoutes"));
+router.use("/challenges", require("./post-route/challengeRoutes"));
+router.use("/pomodoro", require("./post-route/pomodoroRoutes"));
+
+// ✅ PUT Routes (Authenticated)
+router.use("/users", require("./put-routes/userRoutes"));
+router.use("/tasks", require("./put-routes/taskRoutes"));
+router.use("/skills", require("./put-routes/skillRoutes"));
+router.use("/skill-progress", require("./put-routes/skillProgressRoutes"));
+router.use("/moods", require("./put-routes/moodRoutes"));
+router.use("/challenges", require("./put-routes/challengeRoutes"));
+router.use("/pomodoro", require("./put-routes/pomodoroRoutes"));
+
+// ✅ DELETE Routes (Authenticated)
+router.use("/users", require("./delete-routes/userRoutes"));
+router.use("/tasks", require("./delete-routes/taskRoutes"));
+router.use("/skills", require("./delete-routes/skillRoutes"));
+router.use("/skill-progress", require("./delete-routes/skillProgressRoutes"));
+router.use("/moods", require("./delete-routes/moodRoutes"));
+router.use("/challenges", require("./delete-routes/challengeRoutes"));
+router.use("/pomodoro", require("./delete-routes/pomodoroRoutes"));
 
 module.exports = router;
