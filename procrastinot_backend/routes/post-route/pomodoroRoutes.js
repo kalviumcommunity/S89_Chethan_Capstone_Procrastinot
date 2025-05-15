@@ -1,4 +1,4 @@
-//post-route/pomodoroRoutes.js
+//routes/post-route/pomodoroRoutes.js
 const express = require('express');
 const PomodoroSession = require('../../models/PomodoroSession');
 const router = express.Router();

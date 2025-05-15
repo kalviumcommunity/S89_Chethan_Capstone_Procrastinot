@@ -1,4 +1,4 @@
-//PomodoroSession.js
+//models/PomodoroSession.js
 const mongoose = require('mongoose');
 
 const pomodoroSessionSchema = new mongoose.Schema({

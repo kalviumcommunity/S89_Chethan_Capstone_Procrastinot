@@ -1,70 +1,53 @@
-//post-route/userRoutes.js
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const User = require('../../models/User');
+//routes/post-route/userRoutes.js
+const express = require("express");
+const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
+const User = require("../../models/User");
 const router = express.Router();
+const dotenv = require("dotenv");
 
-// POST: Signup a new user
-router.post('/signup', async (req, res) => {
+dotenv.config();
+
+// Generate JWT
+const generateToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
+};
+
+// Register User
+router.post("/register", async (req, res) => {
+  const { username, email, password } = req.body;
+
   try {
-    const { name, email, password, googleId } = req.body;
+    const existing = await User.findOne({ email });
+    if (existing) return res.status(400).json({ error: "Email already exists" });
 
-    // Ensure either password or googleId is provided (but not both)
-    if ((!password && !googleId) || (password && googleId)) {
-      return res.status(400).json({ message: 'Provide either password or Google ID' });
-    }
+    const user = new User({ username, email, password });
+    await user.save();
 
-    // Check if user already exists
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(409).json({ message: 'User already exists' });
-
-    // Hash password if provided
-    let hashedPassword = '';
-    if (password) {
-      const salt = await bcrypt.genSalt(10);
-      hashedPassword = await bcrypt.hash(password, salt);
-    }
-
-    // Create user
-    const newUser = new User({
-      name,
-      email,
-      password: hashedPassword || undefined,
-      googleId: googleId || undefined,
-    });
-
-    await newUser.save();
-    res.status(201).json({ message: 'User registered successfully ✅' });
-
+    const token = generateToken(user._id);
+    res.status(201).json({ userId: user._id, token });
   } catch (err) {
-    res.status(500).json({ message: 'Signup failed', error: err.message });
+    res.status(500).json({ error: "Registration failed" });
   }
 });
 
-// POST: Login user
-router.post('/login', async (req, res) => {
+// Login User
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
   try {
-    const { email, password } = req.body;
-
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password required' });
-    }
-
-    // Find user
     const user = await User.findOne({ email });
-    if (!user || !user.password) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    if (!user) return res.status(400).json({ error: "Invalid credentials" });
 
-    // Compare password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(401).json({ message: 'Invalid credentials' });
+    const match = await bcrypt.compare(password, user.password);
+    if (!match) return res.status(400).json({ error: "Invalid credentials" });
 
-    res.status(200).json({ message: 'Login successful ✅', userId: user._id });
-
+    const token = generateToken(user._id);
+    res.status(200).json({ userId: user._id, token });
   } catch (err) {
-    res.status(500).json({ message: 'Login failed', error: err.message });
+    res.status(500).json({ error: "Login failed" });
   }
 });
 

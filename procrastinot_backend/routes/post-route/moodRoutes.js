@@ -1,4 +1,4 @@
-//post-route/moodRoutes.js
+//routes/post-route/moodRoutes.js
 const express = require('express');
 const MoodLog = require('../../models/MoodLog');
 const router = express.Router();
