@@ -40,10 +40,10 @@ router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ error: "Invalid credentials" });
-
+ // Compare password with stored hashed password
     const match = await bcrypt.compare(password, user.password);
     if (!match) return res.status(400).json({ error: "Invalid credentials" });
-
+// Generate JWT token for authenticated user
     const token = generateToken(user._id);
     res.status(200).json({ userId: user._id, token });
   } catch (err) {
