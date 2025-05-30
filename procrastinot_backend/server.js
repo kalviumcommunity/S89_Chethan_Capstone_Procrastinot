@@ -16,7 +16,10 @@ const app = express();
 app.use(cors()); // Enable Cross-Origin requests
 app.use(express.json()); // Parse incoming JSON requests
 
-
+// Connect to MongoDB
+connectDB()
+  .then(() => console.log("🌐 MongoDB connected successfully"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
 
 // Health-check route
 app.get("/api/ping", (req, res) => {
