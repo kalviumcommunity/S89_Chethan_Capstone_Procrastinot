@@ -6,22 +6,21 @@ const authMiddleware = require("../middleware/authMiddleware"); // Import JWT mi
 // ✅ PUBLIC ROUTES (NO AUTH)
 // =========================
 
-// User routes: register and login should remain public
-const userPostRoutes = require("./post-route/userRoutes"); // Register & Login
-const userGetRoutes = require("./get-routes/userRoutes");  // Optional public GET routes like /me
+// User routes: Register & Login remain public
+const userPostRoutes = require("./post-route/userRoutes"); 
+const userGetRoutes = require("./get-routes/userRoutes");
 
-
-router.use("/users", userPostRoutes); // Login & Register (no auth required)
+router.use("/users", userPostRoutes); // Register & Login (no auth required)
 router.use("/users", userGetRoutes);  // Optional: GET /users/public etc.
-router.use("/user/:id", require("./get-routes/userRoutes")); // Get user by ID (auth required))
+router.use("/user/:id", require("./get-routes/userRoutes")); // Get user by ID (no auth needed)
 
 // ============================
 // ✅ PROTECTED ROUTES (AUTH)
 // ============================
-router.use(authMiddleware); // Everything after this line requires a valid JWT
+// Apply authentication ONLY after public routes
+router.use(authMiddleware); 
 
-// ✅ GET Routes (Authenticated)
-
+// ✅ Authenticated GET Routes
 router.use("/tasks", require("./get-routes/taskRoutes"));
 router.use("/skills", require("./get-routes/skillRoutes"));
 router.use("/skill-progress", require("./get-routes/skillProgressRoutes"));
@@ -29,7 +28,7 @@ router.use("/moods", require("./get-routes/moodRoutes"));
 router.use("/challenges", require("./get-routes/challengeRoutes"));
 router.use("/pomodoro", require("./get-routes/pomodoroRoutes"));
 
-// ✅ POST Routes (Authenticated)
+// ✅ Authenticated POST Routes
 router.use("/tasks", require("./post-route/taskRoutes"));
 router.use("/skills", require("./post-route/skillRoutes"));
 router.use("/skill-progress", require("./post-route/skillProgressRoutes"));
@@ -37,7 +36,7 @@ router.use("/moods", require("./post-route/moodRoutes"));
 router.use("/challenges", require("./post-route/challengeRoutes"));
 router.use("/pomodoro", require("./post-route/pomodoroRoutes"));
 
-// ✅ PUT Routes (Authenticated)
+// ✅ Authenticated PUT Routes
 router.use("/users", require("./put-routes/userRoutes"));
 router.use("/tasks", require("./put-routes/taskRoutes"));
 router.use("/skills", require("./put-routes/skillRoutes"));
@@ -46,7 +45,7 @@ router.use("/moods", require("./put-routes/moodRoutes"));
 router.use("/challenges", require("./put-routes/challengeRoutes"));
 router.use("/pomodoro", require("./put-routes/pomodoroRoutes"));
 
-// ✅ DELETE Routes (Authenticated)
+// ✅ Authenticated DELETE Routes
 router.use("/users", require("./delete-routes/userRoutes"));
 router.use("/tasks", require("./delete-routes/taskRoutes"));
 router.use("/skills", require("./delete-routes/skillRoutes"));
