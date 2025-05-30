@@ -1,4 +1,3 @@
-//routes/post-route/userRoutes.js
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
@@ -20,13 +19,26 @@ router.post("/register", async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
-    const existing = await User.findOne({ email });
-    if (existing) return res.status(400).json({ error: "Email already exists" });
+    // Check if the email already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: "Email already exists" });
+    }
 
-    const user = new User({ username, email, password });
+    // Hash the password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    // Create a new user instance
+    const user = new User({ username, email, password: hashedPassword });
+    
+    // Save the user to the database
     await user.save();
 
+    // Generate JWT token
     const token = generateToken(user._id);
+
+    // Send response
     res.status(201).json({ userId: user._id, token });
   } catch (err) {
     res.status(500).json({ error: "Registration failed" });
@@ -38,12 +50,19 @@ router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    // Find the user by email
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "Invalid credentials" });
- // Compare password with stored hashed password
+    if (!user) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    // Compare password with stored hashed password
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ error: "Invalid credentials" });
-// Generate JWT token for authenticated user
+    if (!match) {
+      return res.status(400).json({ error: "Invalid credentials" });
+    }
+
+    // Generate JWT token for authenticated user
     const token = generateToken(user._id);
     res.status(200).json({ userId: user._id, token });
   } catch (err) {
