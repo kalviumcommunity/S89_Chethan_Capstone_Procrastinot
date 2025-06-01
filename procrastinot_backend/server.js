@@ -23,7 +23,7 @@ app.use(cors());
 app.use(express.json());
 
 // Health-check route
-app.get("/api/ping", (req, res) => {
+app.get("/", (req, res) => {
   res.status(200).json({ message: "Server is running 🟢" });
 });
 
