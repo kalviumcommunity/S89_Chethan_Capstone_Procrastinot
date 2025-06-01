@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
       moodBefore,
       pomodoroCount,
       aiBreakdown,
-      attachmentURL,
+      attachmentUrl, // changed from attachmentURL
     } = req.body;
 
     // Required field validation
@@ -47,7 +47,7 @@ router.post('/', async (req, res) => {
       moodBefore,
       pomodoroCount,
       aiBreakdown,
-      attachmentURL,
+      attachmentUrl, // changed from attachmentURL
     });
 
     const savedTask = await newTask.save();

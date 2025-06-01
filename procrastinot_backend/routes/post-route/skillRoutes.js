@@ -14,7 +14,7 @@ router.post('/', async (req, res) => {
       streak,
       lastStudiedAt,
       aiSuggestions,
-      lessonContent
+      content // changed from lessonContent
     } = req.body;
 
     // Validate required fields
@@ -30,7 +30,7 @@ router.post('/', async (req, res) => {
       streak: streak || 0,
       lastStudiedAt,
       aiSuggestions,
-      lessonContent,
+      content, // changed from lessonContent
     });
 
     await newSkill.save();

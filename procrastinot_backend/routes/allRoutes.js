@@ -11,8 +11,7 @@ const userPostRoutes = require("./post-route/userRoutes");
 const userGetRoutes = require("./get-routes/userRoutes");
 
 router.use("/users", userPostRoutes); // Register & Login (no auth required)
-router.use("/users", userGetRoutes);  // Optional: GET /users/public etc.
-router.use("/user/:id", require("./get-routes/userRoutes")); // Get user by ID (no auth needed)
+router.use("/users", userGetRoutes);  // GET /users and /users/:userId
 
 // ============================
 // ✅ PROTECTED ROUTES (AUTH)

@@ -6,7 +6,7 @@ const router = express.Router();
 // POST: Create a new mood log
 router.post('/', async (req, res) => {
   try {
-    const { userId, moodType, notes, sessionType } = req.body;
+    const { userId, moodType, note, sessionType } = req.body; // changed notes to note
 
     // Validate required fields
     if (!userId || !moodType || !sessionType) {
@@ -16,7 +16,7 @@ router.post('/', async (req, res) => {
     const newMoodLog = new MoodLog({
       userId,
       moodType,
-      notes,
+      note,
       sessionType,
     });
 

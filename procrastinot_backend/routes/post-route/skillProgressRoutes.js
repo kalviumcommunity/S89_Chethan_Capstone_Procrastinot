@@ -6,17 +6,17 @@ const router = express.Router();
 // POST: Add new skill progress
 router.post('/', async (req, res) => {
   try {
-    const { userId, skillName, subTopic, progress, streak, lastAccessed, aiSuggestions } = req.body;
+    const { userId, skillId, subtopic, progress, streak, lastAccessed, aiSuggestions } = req.body; // changed skillName to skillId and subTopic to subtopic
 
     // Basic validation
-    if (!userId || !skillName || !subTopic) {
-      return res.status(400).json({ message: 'userId, skillName, and subTopic are required' });
+    if (!userId || !skillId || !subtopic) {
+      return res.status(400).json({ message: 'userId, skillId, and subtopic are required' });
     }
 
     const newProgress = new SkillProgress({
       userId,
-      skillName,
-      subTopic,
+      skillId,
+      subtopic,
       progress,
       streak,
       lastAccessed,
