@@ -156,7 +156,5 @@ Procrastinot is a full-stack productivity web application designed to help users
 - **May 31**: Record demo video + Submit final capstone!
 
 ---
-
-✅ Every day = 1 PR  
-✅ Minimum 30+ PRs total  
-✅ Focus on clean commits, small tasks per branch
+## **Deployed Link**
+- https://s89-chethan-capstone-procrastinot-1.onrender.com/
