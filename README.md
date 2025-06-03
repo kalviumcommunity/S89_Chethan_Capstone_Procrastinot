@@ -156,3 +156,5 @@ Procrastinot is a full-stack productivity web application designed to help users
 - **May 31**: Record demo video + Submit final capstone!
 
 ---
+## **Deployed Link**
+- https://s89-chethan-capstone-procrastinot-1.onrender.com/
