@@ -19,7 +19,10 @@ if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "http://localhost:5173", // during local dev
+  credentials: true
+}));
 app.use(express.json());
 
 // Health-check route
