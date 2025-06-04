@@ -1,9 +1,9 @@
-// src/components/Auth/LoginForm.jsx
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import AuthLayout from "../components/Auth/AuthLayout";
+import AuthLayout from "../components/Auth/AuthLayout"; // Ensure correct path
 import axios from "axios";
 import { motion } from "framer-motion";
+import GoogleLoginButton from "../components/GoogleLoginButton"; // Ensure correct path
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -22,8 +22,8 @@ const LoginForm = () => {
 
     try {
       const res = await axios.post("http://localhost:8080/api/users/login", form);
-      localStorage.setItem("token", res.data.token); // save JWT
-      navigate("/dashboard"); // redirect to user dashboard
+      localStorage.setItem("token", res.data.token); // Store JWT token
+      navigate("/dashboard"); // Redirect after successful login
     } catch (err) {
       console.error(err);
       setError(err.response?.data?.message || "Login failed");
@@ -35,11 +35,7 @@ const LoginForm = () => {
   return (
     <AuthLayout title="Login to Procrastinot">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <label className="block mb-1 text-sm font-medium">Email</label>
           <input
             type="email"
@@ -51,11 +47,7 @@ const LoginForm = () => {
           />
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
           <label className="block mb-1 text-sm font-medium">Password</label>
           <input
             type="password"
@@ -67,16 +59,9 @@ const LoginForm = () => {
           />
         </motion.div>
 
-        {error && (
-          <p className="text-red-500 text-sm">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
-        <motion.button
-          type="submit"
-          disabled={loading}
-          className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md transition duration-300"
-          whileTap={{ scale: 0.95 }}
-        >
+        <motion.button type="submit" disabled={loading} className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md transition duration-300" whileTap={{ scale: 0.95 }}>
           {loading ? "Logging in..." : "Login"}
         </motion.button>
 
@@ -90,15 +75,8 @@ const LoginForm = () => {
           <span className="h-px bg-gray-300 w-1/4"></span>
         </div>
 
-        <motion.button
-          type="button"
-          className="w-full py-2 bg-white border hover:bg-gray-100 text-gray-700 font-medium rounded-md transition duration-300 flex items-center justify-center gap-2"
-          whileTap={{ scale: 0.95 }}
-          onClick={() => alert("Google OAuth coming soon!")}
-        >
-          <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" className="w-5 h-5" />
-          Continue with Google
-        </motion.button>
+        {/* Google OAuth Login */}
+        <GoogleLoginButton />
       </form>
     </AuthLayout>
   );
