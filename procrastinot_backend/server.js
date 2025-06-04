@@ -1,58 +1,68 @@
-// server.js
-
 const express = require("express");
 const dotenv = require("dotenv");
 const cors = require("cors");
 const connectDB = require("./config/db.js");
 const allRoutes = require("./routes/allRoutes.js");
+const passport = require("passport");
+require("./config/passport");
 
-// Load environment variables from .env file
+// Load environment variables
 dotenv.config();
 
-// Check for required env variables
-if (!process.env.MONGO_URI || !process.env.JWT_SECRET) {
-  console.error("❌ Missing required environment variables (MONGO_URI, JWT_SECRET)");
-  process.exit(1);
-}
+// 🔹 Ensure required environment variables exist
+const requiredEnvVars = [
+  "MONGO_URI", 
+  "JWT_SECRET", 
+  "PORT", 
+  "GOOGLE_CLIENT_ID", 
+  "GOOGLE_CLIENT_SECRET",
+  "CLIENT_URL"
+];
+
+requiredEnvVars.forEach((key) => {
+  if (!process.env[key]) {
+    console.error(`❌ Missing required environment variable: ${key}`);
+    process.exit(1);
+  }
+});
 
 // Initialize Express app
 const app = express();
 
-// Middleware
+// 🔹 Middleware
 app.use(cors({
-  origin: "http://localhost:5173", // during local dev
-  credentials: true
+  origin: process.env.CLIENT_URL,
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json());
+app.use(passport.initialize());
 
-// Health-check route
-app.get("/", (req, res) => {
-  res.status(200).json({ message: "Server is running 🟢" });
-});
+// 🔹 Health-check route
+app.get("/", (req, res) => res.status(200).json({ message: "🚀 Server is running!" }));
 
-// Mount all API feature routes
+// 🔹 Mount all API feature routes
 app.use("/api", allRoutes);
 
-// 404 handler
-app.use((req, res, next) => {
-  res.status(404).json({ error: "Route not found." });
-});
+// 🔹 404 Handler
+app.use((req, res) => res.status(404).json({ error: "❌ Route not found" }));
 
-// Global error handler
+// 🔹 Global Error Handler
 app.use((err, req, res, next) => {
-  console.error("🔥 Global Error Handler:", err.stack);
-  res.status(500).json({ error: "Something went wrong!" });
+  console.error("🔥 Global Error:", err.stack);
+  res.status(500).json({ error: "Internal Server Error" });
 });
 
-// Start the server only after DB connection
+// 🔹 Start the server **only after** DB connection
 const PORT = process.env.PORT || 8080;
 connectDB()
   .then(() => {
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
+      console.log(`✅ Server running at: http://localhost:${PORT}`);
     });
   })
   .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
+    console.error("❌ MongoDB Connection Failed:", err);
     process.exit(1);
   });
