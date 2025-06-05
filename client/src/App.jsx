@@ -4,6 +4,7 @@ import Login from './pages/LoginForm';
 import Register from './pages/RegisterForm';
 import AuthCallback from './pages/AuthCallback';
 import Dashboard from './pages/Dashboard'; // Placeholder for future dashboard page
+import Pomodoro from './pages/Pomodoro';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/register" element={<Register />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/pomodoro" element={<Pomodoro />} />
       {/* More routes later */}
     </Routes>
   );
