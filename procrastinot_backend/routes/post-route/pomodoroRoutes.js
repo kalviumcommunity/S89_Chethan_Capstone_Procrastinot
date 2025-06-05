@@ -6,7 +6,7 @@ const router = express.Router();
 // POST: Create a new Pomodoro session
 router.post('/', async (req, res) => {
   try {
-    const { userId, taskId, duration, status, moodBefore, moodAfter } = req.body;
+    const { userId, taskId, duration, status, moodBefore, moodAfter, startTime, endTime } = req.body;
 
     if (!userId || !duration || !status) {
       return res.status(400).json({ message: 'userId, duration, and status are required' });
@@ -19,6 +19,8 @@ router.post('/', async (req, res) => {
       status,
       moodBefore,
       moodAfter,
+      startTime: startTime || Date.now(),
+      endTime: endTime || null,
     });
 
     await newSession.save();
