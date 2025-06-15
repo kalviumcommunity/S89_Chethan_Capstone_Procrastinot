@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef, useCallback } from "react";
-import axios from "axios";
+import { useState, useEffect, useRef } from "react";
+import { motion } from "framer-motion";
 import clsx from "clsx";
 import confetti from "canvas-confetti";
 import { Play, Pause, RotateCcw } from "lucide-react";
@@ -10,42 +10,13 @@ const MODES = {
   long: { label: "Long Break", duration: 15 * 60 },
 };
 
-const MOODS = [
-  { label: "Happy", emoji: "😊" },
-  { label: "Neutral", emoji: "😐" },
-  { label: "Sad", emoji: "😢" },
-  { label: "Anxious", emoji: "😰" },
-  { label: "Excited", emoji: "😄" },
-];
-
 const chime = new Audio("/assets/preview.mp3");
 
 export default function PomodoroTimer() {
   const [mode, setMode] = useState("work");
   const [timeLeft, setTimeLeft] = useState(MODES[mode].duration);
   const [isRunning, setIsRunning] = useState(false);
-  const [startTime, setStartTime] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [selectedTaskId, setSelectedTaskId] = useState("");
-  const [moodBefore, setMoodBefore] = useState("Neutral");
-  const [showMoodAfter, setShowMoodAfter] = useState(false);
   const intervalRef = useRef(null);
-
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const token = localStorage.getItem("token");
-        const response = await axios.get(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8080/api"}/tasks`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setTasks(response.data.filter((task) => task.status !== "Completed"));
-      } catch (err) {
-        console.error("Error fetching tasks:", err);
-      }
-    };
-    fetchTasks();
-  }, []);
 
   useEffect(() => {
     if (Notification.permission !== "granted") Notification.requestPermission();
@@ -63,40 +34,17 @@ export default function PomodoroTimer() {
     clearInterval(intervalRef.current);
   }, [mode]);
 
-  const handleSessionCompletion = useCallback(
-    async (moodAfter = "Neutral") => {
-      const endTime = new Date();
-      const token = localStorage.getItem("token");
-      confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-      chime.play();
-      if (Notification.permission === "granted") {
-        new Notification("Pomodoro Complete! 🎉", {
-          body: `You completed a ${MODES[mode].label.toLowerCase()} session.`,
-          icon: "/favicon.ico",
-        });
-      }
-      try {
-        const userId = JSON.parse(localStorage.getItem("user"))._id;
-        await axios.post(
-          `${import.meta.env.VITE_API_URL || "http://localhost:8080/api"}/pomodoro`,
-          {
-            userId,
-            taskId: selectedTaskId || null,
-            duration: MODES[mode].duration,
-            status: "Completed",
-            startTime,
-            endTime,
-            moodBefore,
-            moodAfter,
-          },
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-      } catch (err) {
-        console.error("Error saving Pomodoro:", err);
-      }
-    },
-    [mode, startTime, selectedTaskId, moodBefore]
-  );
+  const handleSessionCompletion = () => {
+    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+    chime.play();
+    if (Notification.permission === "granted") {
+      new Notification("Pomodoro Complete! 🎉", {
+        body: `You completed a ${MODES[mode].label.toLowerCase()} session.`,
+        icon: "/favicon.ico",
+      });
+    }
+    setIsRunning(false);
+  };
 
   useEffect(() => {
     if (isRunning) {
@@ -104,7 +52,7 @@ export default function PomodoroTimer() {
         setTimeLeft((prev) => {
           if (prev === 0) {
             clearInterval(intervalRef.current);
-            setShowMoodAfter(true);
+            handleSessionCompletion();
             return 0;
           }
           return prev - 1;
@@ -114,144 +62,156 @@ export default function PomodoroTimer() {
       clearInterval(intervalRef.current);
     }
     return () => clearInterval(intervalRef.current);
-  }, [isRunning]);
+  }, [isRunning, handleSessionCompletion]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-800 to-purple-700 text-white p-6 flex flex-col items-center">
-      <div className="max-w-xl w-full bg-white/10 backdrop-blur-xl rounded-3xl shadow-lg p-8">
-        {/* Task Selection */}
-        <div className="mb-6">
-          <label className="block text-sm mb-2">Select Task</label>
-          <select
-            value={selectedTaskId}
-            onChange={(e) => setSelectedTaskId(e.target.value)}
-            className="w-full p-2 rounded-lg text-black"
-          >
-            <option value="">No Task Selected</option>
-            {tasks.map((task) => (
-              <option key={task._id} value={task._id}>
-                {task.title}
-              </option>
-            ))}
-          </select>
-        </div>
+    <div className="w-full max-w-4xl mx-auto">
+      <div className="card-glass p-8 md:p-12">
 
-        {/* Mood Before */}
-        <div className="mb-6">
-          <label className="block text-sm mb-2">How do you feel?</label>
-          <div className="flex flex-wrap gap-2">
-            {MOODS.map((m) => (
-              <button
-                key={m.label}
-                onClick={() => setMoodBefore(m.label)}
-                className={clsx(
-                  "px-3 py-1 rounded-full text-sm transition flex items-center gap-1",
-                  moodBefore === m.label
-                    ? "bg-purple-600 text-white"
-                    : "bg-purple-100 text-purple-800 hover:bg-purple-200"
-                )}
-              >
-                <span>{m.emoji}</span>
-                <span>{m.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
 
         {/* Mode Selector */}
-        <div className="flex justify-center gap-4 mb-6">
+        <motion.div
+          className="flex justify-center gap-3 mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+        >
           {Object.entries(MODES).map(([key, value]) => (
-            <button
+            <motion.button
               key={key}
               onClick={() => setMode(key)}
               className={clsx(
-                "px-4 py-2 rounded-full font-semibold",
+                "px-6 py-3 rounded-2xl font-semibold transition-all duration-300 relative overflow-hidden",
                 mode === key
-                  ? "bg-white text-purple-700"
-                  : "bg-purple-200 text-purple-900 hover:bg-purple-300"
+                  ? "glass text-white shadow-glass border-2 border-white/20"
+                  : "bg-white/10 text-white/70 hover:bg-white/20 hover:text-white border-2 border-transparent"
               )}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
-              {value.label}
-            </button>
+              <span className="relative z-10">{value.label}</span>
+              {mode === key && (
+                <motion.div
+                  className="absolute inset-0 bg-gradient-to-r from-primary-500/20 to-secondary-500/20 rounded-2xl"
+                  layoutId="activeMode"
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                />
+              )}
+            </motion.button>
           ))}
-        </div>
+        </motion.div>
 
         {/* Timer Circle */}
-        <div className="relative w-64 h-64 mx-auto mb-6">
-          <svg className="w-full h-full transform -rotate-90">
-            <circle cx="128" cy="128" r="115" stroke="#4c1d95" strokeWidth="16" fill="none" />
-            <circle
-              cx="128"
-              cy="128"
-              r="115"
-              stroke="#c084fc"
-              strokeWidth="16"
-              fill="none"
-              strokeDasharray={2 * Math.PI * 115}
-              strokeDashoffset={(1 - timeLeft / MODES[mode].duration) * 2 * Math.PI * 115}
-              strokeLinecap="round"
-              className="transition-all duration-200 ease-out"
-            />
-          </svg>
-          <div className="absolute inset-0 flex items-center justify-center text-5xl font-bold">
-            {formatTime(timeLeft)}
+        <motion.div
+          className="relative w-80 h-80 mx-auto mb-12"
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+        >
+          {/* Outer Glow Ring */}
+          <div className="absolute inset-0 rounded-full bg-gradient-to-r from-primary-500/20 to-secondary-500/20 blur-xl" />
+
+          {/* Main Timer Circle */}
+          <div className="relative w-full h-full card-glass rounded-full p-8 flex items-center justify-center">
+            <svg className="absolute inset-4 w-[calc(100%-2rem)] h-[calc(100%-2rem)] transform -rotate-90">
+              {/* Background Circle */}
+              <circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                stroke="rgba(255,255,255,0.1)"
+                strokeWidth="8"
+                fill="none"
+              />
+              {/* Progress Circle */}
+              <motion.circle
+                cx="50%"
+                cy="50%"
+                r="45%"
+                stroke="url(#gradient)"
+                strokeWidth="8"
+                fill="none"
+                strokeDasharray={2 * Math.PI * (0.45 * 320)}
+                strokeDashoffset={(1 - timeLeft / MODES[mode].duration) * 2 * Math.PI * (0.45 * 320)}
+                strokeLinecap="round"
+                className="transition-all duration-1000 ease-out"
+              />
+              {/* Gradient Definition */}
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#3B82F6" />
+                  <stop offset="50%" stopColor="#8B5CF6" />
+                  <stop offset="100%" stopColor="#EC4899" />
+                </linearGradient>
+              </defs>
+            </svg>
+
+            {/* Timer Display */}
+            <div className="text-center">
+              <motion.div
+                className="text-6xl md:text-7xl font-display font-bold text-white mb-2"
+                key={timeLeft}
+                initial={{ scale: 1.1 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.2 }}
+              >
+                {formatTime(timeLeft)}
+              </motion.div>
+              <div className="text-white/60 text-lg font-medium">
+                {MODES[mode].label}
+              </div>
+            </div>
           </div>
-        </div>
+        </motion.div>
 
         {/* Controls */}
-        <div className="flex justify-center gap-4">
+        <motion.div
+          className="flex flex-col sm:flex-row justify-center gap-4 sm:gap-6"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+        >
           {!isRunning ? (
-            <button
+            <motion.button
               onClick={() => {
                 setIsRunning(true);
                 setStartTime(new Date());
               }}
-              className="flex items-center gap-2 px-6 py-2 bg-green-500 text-white rounded-full hover:bg-green-600 shadow"
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <Play size={20} /> Start
-            </button>
+              <Play size={24} />
+              <span>Start Focus</span>
+            </motion.button>
           ) : (
-            <button
+            <motion.button
               onClick={() => setIsRunning(false)}
-              className="flex items-center gap-2 px-6 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 shadow"
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
             >
-              <Pause size={20} /> Pause
-            </button>
+              <Pause size={24} />
+              <span>Pause</span>
+            </motion.button>
           )}
-          <button
+
+          <motion.button
             onClick={() => {
               setIsRunning(false);
               setTimeLeft(MODES[mode].duration);
             }}
-            className="flex items-center gap-2 px-6 py-2 bg-gray-500 text-white rounded-full hover:bg-gray-600 shadow"
+            className="flex items-center justify-center gap-3 px-8 py-4 glass text-white rounded-2xl font-semibold hover:bg-white/20 transition-all duration-200"
+            whileHover={{ scale: 1.05, y: -2 }}
+            whileTap={{ scale: 0.95 }}
           >
-            <RotateCcw size={20} /> Reset
-          </button>
-        </div>
+            <RotateCcw size={24} />
+            <span>Reset</span>
+          </motion.button>
+        </motion.div>
       </div>
 
-      {/* Mood After Modal */}
-      {showMoodAfter && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
-          <div className="bg-white text-purple-900 p-6 rounded-2xl shadow-xl w-[90%] max-w-md">
-            <h3 className="text-lg font-semibold mb-4 text-center">How do you feel now?</h3>
-            <div className="flex flex-wrap justify-center gap-3">
-              {MOODS.map((m) => (
-                <button
-                  key={m.label}
-                  onClick={() => {
-                    handleSessionCompletion(m.label);
-                    setShowMoodAfter(false);
-                  }}
-                  className="px-4 py-2 rounded-full bg-purple-100 text-purple-800 hover:bg-purple-200"
-                >
-                  {m.emoji} {m.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
+
     </div>
   );
 }

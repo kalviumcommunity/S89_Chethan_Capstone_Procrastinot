@@ -14,7 +14,7 @@
     "axios": "^1.9.0",
     "canvas-confetti": "^1.9.3",
     "clsx": "^2.1.1",
-    "framer-motion": "^12.16.0",
+    "framer-motion": "^12.18.1",
     "jwt-decode": "^4.0.0",
     "lucide-react": "^0.511.0",
     "react": "^19.1.0",

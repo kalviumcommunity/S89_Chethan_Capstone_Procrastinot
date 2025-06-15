@@ -41,9 +41,19 @@ const RegisterForm = () => {
 
   return (
     <AuthLayout title="Create your account">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
-          <label className="block mb-1 text-sm font-medium">Full Name</label>
+      <motion.form 
+        onSubmit={handleSubmit} 
+        className="space-y-6 card-modern p-8"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.1 }}
+        >
+          <label className="block mb-2 text-sm font-semibold text-gradient">Full Name</label>
           <input
             type="text"
             name="username"
@@ -51,12 +61,17 @@ const RegisterForm = () => {
             onChange={handleChange}
             required
             autoComplete="name"
-            className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-indigo-500"
+            className="input-modern"
+            placeholder="Enter your full name"
           />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-          <label className="block mb-1 text-sm font-medium">Email</label>
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.2 }}
+        >
+          <label className="block mb-2 text-sm font-semibold text-gradient">Email</label>
           <input
             type="email"
             name="email"
@@ -64,12 +79,17 @@ const RegisterForm = () => {
             onChange={handleChange}
             required
             autoComplete="email"
-            className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-indigo-500"
+            className="input-modern"
+            placeholder="Enter your email"
           />
         </motion.div>
 
-        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-          <label className="block mb-1 text-sm font-medium">Password</label>
+        <motion.div 
+          initial={{ opacity: 0, y: 10 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          transition={{ delay: 0.3 }}
+        >
+          <label className="block mb-2 text-sm font-semibold text-gradient">Password</label>
           <input
             type="password"
             name="password"
@@ -77,28 +97,45 @@ const RegisterForm = () => {
             onChange={handleChange}
             required
             autoComplete="new-password"
-            className="w-full px-4 py-2 border rounded-md outline-none focus:ring-2 focus:ring-indigo-500"
+            className="input-modern"
+            placeholder="Create a password"
           />
         </motion.div>
 
-        {error && <p className="text-red-500 text-sm">{error}</p>}
+        {error && (
+          <motion.p 
+            className="text-red-500 text-sm bg-red-50 p-3 rounded-lg"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+          >
+            {error}
+          </motion.p>
+        )}
 
-        <motion.button type="submit" disabled={loading} className="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-md transition duration-300" whileTap={{ scale: 0.95 }}>
+        <motion.button 
+          type="submit" 
+          disabled={loading}
+          className="btn-primary w-full"
+          whileTap={{ scale: 0.95 }}
+        >
           {loading ? "Creating account..." : "Register"}
         </motion.button>
 
-        <div className="text-center text-sm text-gray-600">
-          Already have an account? <a href="/login" className="text-indigo-600">Login</a>
+        <div className="text-center text-sm">
+          <span className="text-gray-600">Already have an account?</span>{" "}
+          <a href="/login" className="text-gradient font-semibold hover-lift inline-block">
+            Login
+          </a>
         </div>
 
-        <div className="flex items-center justify-center gap-2 mt-4">
-          <span className="h-px bg-gray-300 w-1/4"></span>
-          <span className="text-gray-400 text-sm">OR</span>
-          <span className="h-px bg-gray-300 w-1/4"></span>
+        <div className="flex items-center justify-center gap-4 my-6">
+          <span className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></span>
+          <span className="text-gray-400 text-sm font-medium">OR</span>
+          <span className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent flex-1"></span>
         </div>
 
         <GoogleLoginButton />
-      </form>
+      </motion.form>
     </AuthLayout>
   );
 };
