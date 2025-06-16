@@ -117,4 +117,81 @@
   .text-shadow-lg {
     text-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+
+  /* Line clamp utilities */
+  .line-clamp-1 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+  }
+
+  .line-clamp-2 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Calendar specific styles */
+  .calendar-day {
+    @apply relative p-2 min-h-[60px] cursor-pointer rounded-lg transition-all duration-200;
+  }
+
+  .calendar-day:hover {
+    @apply bg-white/10;
+  }
+
+  .calendar-day.today {
+    @apply bg-primary-500/20 border border-primary-500/50;
+  }
+
+  .calendar-day.selected {
+    @apply bg-secondary-500/20 border border-secondary-500/50;
+  }
+
+  .calendar-day.other-month {
+    @apply text-white/40;
+  }
+
+  /* Task priority colors */
+  .priority-urgent {
+    @apply text-red-400 bg-red-500/20;
+  }
+
+  .priority-high {
+    @apply text-orange-400 bg-orange-500/20;
+  }
+
+  .priority-medium {
+    @apply text-yellow-400 bg-yellow-500/20;
+  }
+
+  .priority-low {
+    @apply text-green-400 bg-green-500/20;
+  }
+
+  /* Task status colors */
+  .status-completed {
+    @apply text-green-400 bg-green-500/20;
+  }
+
+  .status-in-progress {
+    @apply text-blue-400 bg-blue-500/20;
+  }
+
+  .status-pending {
+    @apply text-gray-400 bg-gray-500/20;
+  }
+
+  .status-revise {
+    @apply text-purple-400 bg-purple-500/20;
+  }
 }

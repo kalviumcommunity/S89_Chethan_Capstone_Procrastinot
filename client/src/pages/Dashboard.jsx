@@ -3,6 +3,7 @@ import Navbar from '../components/Navbar1';
 import Footer from '../components/Footer';
 import FeatureCard from '../components/FeatureCard';
 import { motion } from 'framer-motion';
+import { Link } from 'react-router-dom';
 import {
   TimerIcon,
   SmileIcon,
@@ -191,23 +192,27 @@ export default function Dashboard() {
             className="mt-16 text-center"
           >
             <div className="inline-flex items-center gap-4">
-              <motion.button
-                className="btn-primary px-6 py-3 flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Zap size={20} />
-                Quick Start Pomodoro
-              </motion.button>
+              <Link to="/pomodoro">
+                <motion.button
+                  className="btn-primary px-6 py-3 flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Zap size={20} />
+                  Quick Start Pomodoro
+                </motion.button>
+              </Link>
 
-              <motion.button
-                className="btn-glass px-6 py-3 flex items-center gap-2"
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Target size={20} />
-                Add New Task
-              </motion.button>
+              <Link to="/tasks">
+                <motion.button
+                  className="btn-glass px-6 py-3 flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <Target size={20} />
+                  Add New Task
+                </motion.button>
+              </Link>
             </div>
           </motion.div>
         </div>
