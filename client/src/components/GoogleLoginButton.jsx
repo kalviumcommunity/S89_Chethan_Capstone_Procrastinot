@@ -1,8 +1,9 @@
 import { GoogleLogin } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import axios from 'axios';
+import api from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { storeAuthData, handleAuthError } from '../utils/auth';
 
 const GoogleLoginButton = () => {
   const navigate = useNavigate();
@@ -16,22 +17,21 @@ const GoogleLoginButton = () => {
       const decoded = jwtDecode(credentialResponse.credential);
       const { name, email, sub: googleId } = decoded;
 
-      const res = await axios.post(`${import.meta.env.VITE_API_URL}/api/users/google-login`, {
+      const res = await api.post('/api/users/google-login', {
         username: name,
         email,
         googleId,
       });
 
-      if (res.data.token) {
-        localStorage.setItem('token', res.data.token);
-        localStorage.setItem('userId', res.data.userId);
+      if (res.data.token && res.data.userId) {
+        storeAuthData(res.data.token, res.data.userId);
         navigate('/dashboard');
       } else {
-        throw new Error('No token received');
+        throw new Error('Invalid response from server');
       }
     } catch (err) {
       console.error('Google login failed:', err);
-      setError(err.response?.data?.message || 'Failed to login with Google. Please try again.');
+      setError(handleAuthError(err));
     } finally {
       setIsLoading(false);
     }

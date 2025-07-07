@@ -1,9 +1,10 @@
 import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../components/Auth/AuthLayout";
-import axios from "axios";
+import api from "../services/api";
 import { motion } from "framer-motion";
 import GoogleLoginButton from "../components/GoogleLoginButton";
+import { storeAuthData, handleAuthError, isValidEmail, validatePassword } from "../utils/auth";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -27,13 +28,44 @@ const RegisterForm = () => {
     setError("");
     setLoading(true);
 
+    // Validate inputs
+    if (!form.username || !form.email || !form.password) {
+      setError("Please fill in all fields");
+      setLoading(false);
+      return;
+    }
+
+    if (form.username.length < 3) {
+      setError("Username must be at least 3 characters long");
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidEmail(form.email)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
+    const passwordValidation = validatePassword(form.password);
+    if (!passwordValidation.isValid) {
+      setError(passwordValidation.message);
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await axios.post("http://localhost:8080/api/users/register", form);
-      localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
+      const res = await api.post('/api/users/register', form);
+
+      if (res.data.token && res.data.userId) {
+        storeAuthData(res.data.token, res.data.userId);
+        navigate("/dashboard");
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Registration failed");
+      console.error("Registration error:", err);
+      setError(handleAuthError(err));
     } finally {
       setLoading(false);
     }

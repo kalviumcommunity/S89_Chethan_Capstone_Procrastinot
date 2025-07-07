@@ -4,6 +4,7 @@ const cors = require("cors");
 const connectDB = require("./config/db.js");
 const allRoutes = require("./routes/allRoutes.js");
 const passport = require("passport");
+const { generalLimiter } = require("./middleware/rateLimiter");
 require("./config/passport");
 
 // Load environment variables
@@ -30,13 +31,15 @@ requiredEnvVars.forEach((key) => {
 const app = express();
 
 // 🔹 Middleware
+app.use(generalLimiter); // Apply rate limiting to all requests
 app.use(cors({
   origin: process.env.CLIENT_URL,
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
+app.use(express.json({ limit: '10mb' })); // Limit request body size
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(passport.initialize());
 
 // 🔹 Health-check route

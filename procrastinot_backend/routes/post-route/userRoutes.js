@@ -6,11 +6,20 @@ const router = express.Router();
 const passport = require("passport");
 require("../../config/passport"); // Load passport config
 const dotenv = require("dotenv");
+const { authLimiter } = require("../../middleware/rateLimiter");
 
 dotenv.config();
 
+// Helper function to validate JWT_SECRET
+const validateJWTSecret = () => {
+  if (!process.env.JWT_SECRET) {
+    throw new Error("JWT_SECRET environment variable is required");
+  }
+};
+
 // 🔐 Generate JWT Token
 const generateToken = (userId) => {
+  validateJWTSecret();
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
     expiresIn: "7d",
   });
@@ -24,35 +33,50 @@ router.get(
   passport.authenticate("google", { session: false, failureRedirect: "/login" }),
   async (req, res) => {
     try {
-      if (!req.user) return res.status(401).json({ error: "Authentication failed" });
+      if (!req.user) return res.status(401).json({ message: "Authentication failed" });
 
       const token = generateToken(req.user._id);
       res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}`);
     } catch (err) {
       console.error('Google OAuth error:', err);
-      res.status(500).json({ error: "Google OAuth failed" });
+      res.status(500).json({ message: "Google OAuth failed" });
     }
   }
 );
 
 // 🔹 Google Login (from frontend)
-router.post("/google-login", async (req, res) => {
+router.post("/google-login", authLimiter, async (req, res) => {
   try {
     const { email, username, googleId } = req.body;
-    
+
     if (!email || !googleId) {
-      return res.status(400).json({ error: "Email and Google ID are required" });
+      return res.status(400).json({ message: "Email and Google ID are required" });
     }
 
+    // Sanitize username for database validation (remove spaces, special chars)
+    const sanitizedUsername = (username || email.split('@')[0])
+      .replace(/[^a-zA-Z0-9_-]/g, '') // Remove invalid characters
+      .substring(0, 30); // Ensure max length
+
     // Find or create user
-    let user = await User.findOne({ googleId });
-    
+    let user = await User.findOne({
+      $or: [
+        { googleId: googleId },
+        { email: email }
+      ]
+    });
+
     if (!user) {
+      // Create new user
       user = new User({
         email,
-        username,
+        username: sanitizedUsername,
         googleId
       });
+      await user.save();
+    } else if (!user.googleId) {
+      // Link existing email account with Google
+      user.googleId = googleId;
       await user.save();
     }
 
@@ -60,21 +84,34 @@ router.post("/google-login", async (req, res) => {
     res.status(200).json({ token, userId: user._id });
   } catch (err) {
     console.error("Google login error:", err);
-    res.status(500).json({ error: "Google login failed" });
+    res.status(500).json({ message: "Google login failed", error: err.message });
   }
 });
 
 // 🔹 User Registration
-router.post("/register", async (req, res) => {
+router.post("/register", authLimiter, async (req, res) => {
   const { username, email, password } = req.body;
 
   try {
     if (!username || !email || !password) {
-      return res.status(400).json({ error: "All fields are required" });
+      return res.status(400).json({ message: "All fields are required" });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) return res.status(400).json({ error: "Email already exists" });
+    // Check for existing user by email or username
+    const existingUser = await User.findOne({
+      $or: [
+        { email: email },
+        { username: username }
+      ]
+    });
+
+    if (existingUser) {
+      if (existingUser.email === email) {
+        return res.status(400).json({ message: "Email already exists" });
+      } else {
+        return res.status(400).json({ message: "Username already exists" });
+      }
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -85,28 +122,39 @@ router.post("/register", async (req, res) => {
     res.status(201).json({ userId: user._id, token });
   } catch (err) {
     console.error("Registration error:", err);
-    res.status(500).json({ error: "Registration failed" });
+    res.status(500).json({ message: "Registration failed" });
   }
 });
 
 // 🔹 User Login
-router.post("/login", async (req, res) => {
+router.post("/login", authLimiter, async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    if (!email || !password) return res.status(400).json({ error: "Email and password required" });
+    if (!email || !password) {
+      return res.status(400).json({ message: "Email and password are required" });
+    }
 
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ error: "Invalid credentials" });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
+
+    // Check if user has a password (not Google-only account)
+    if (!user.password) {
+      return res.status(400).json({ message: "Please login with Google or reset your password" });
+    }
 
     const match = await bcrypt.compare(password, user.password);
-    if (!match) return res.status(400).json({ error: "Invalid credentials" });
+    if (!match) {
+      return res.status(400).json({ message: "Invalid credentials" });
+    }
 
     const token = generateToken(user._id);
     res.status(200).json({ userId: user._id, token });
   } catch (err) {
     console.error("Login error:", err);
-    res.status(500).json({ error: "Login failed" });
+    res.status(500).json({ message: "Login failed" });
   }
 });
 

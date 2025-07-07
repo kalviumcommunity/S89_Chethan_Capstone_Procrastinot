@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../components/Auth/AuthLayout";
-import axios from "axios";
+import api from "../services/api";
 import { motion } from "framer-motion";
 import GoogleLoginButton from "../components/GoogleLoginButton";
+import { storeAuthData, handleAuthError, isValidEmail } from "../utils/auth";
 
 const LoginForm = () => {
   const navigate = useNavigate();
@@ -20,13 +21,31 @@ const LoginForm = () => {
     setError("");
     setLoading(true);
 
+    // Validate inputs
+    if (!form.email || !form.password) {
+      setError("Please fill in all fields");
+      setLoading(false);
+      return;
+    }
+
+    if (!isValidEmail(form.email)) {
+      setError("Please enter a valid email address");
+      setLoading(false);
+      return;
+    }
+
     try {
-      const res = await axios.post("http://localhost:8080/api/users/login", form);
-      localStorage.setItem("token", res.data.token);
-      navigate("/dashboard");
+      const res = await api.post('/api/users/login', form);
+
+      if (res.data.token && res.data.userId) {
+        storeAuthData(res.data.token, res.data.userId);
+        navigate("/dashboard");
+      } else {
+        throw new Error("Invalid response from server");
+      }
     } catch (err) {
-      console.error(err);
-      setError(err.response?.data?.message || "Login failed");
+      console.error("Login error:", err);
+      setError(handleAuthError(err));
     } finally {
       setLoading(false);
     }
