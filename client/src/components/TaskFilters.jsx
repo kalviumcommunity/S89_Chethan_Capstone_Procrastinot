@@ -181,12 +181,16 @@ export default function TaskFilters({
                 value={filters.priority}
                 onChange={(e) => updateFilter('priority', e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white'
+                }}
               >
-                <option value="all">All Priorities</option>
-                <option value="Low">Low</option>
-                <option value="Medium">Medium</option>
-                <option value="High">High</option>
-                <option value="Urgent">Urgent</option>
+                <option value="all" style={{ backgroundColor: '#1f2937', color: 'white' }}>All Priorities</option>
+                <option value="Low" style={{ backgroundColor: '#1f2937', color: 'white' }}>Low</option>
+                <option value="Medium" style={{ backgroundColor: '#1f2937', color: 'white' }}>Medium</option>
+                <option value="High" style={{ backgroundColor: '#1f2937', color: 'white' }}>High</option>
+                <option value="Urgent" style={{ backgroundColor: '#1f2937', color: 'white' }}>Urgent</option>
               </select>
             </div>
 
@@ -200,14 +204,18 @@ export default function TaskFilters({
                 value={filters.category}
                 onChange={(e) => updateFilter('category', e.target.value)}
                 className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white'
+                }}
               >
-                <option value="all">All Categories</option>
-                <option value="General">General</option>
-                <option value="Work">Work</option>
-                <option value="Personal">Personal</option>
-                <option value="Study">Study</option>
-                <option value="Health">Health</option>
-                <option value="Finance">Finance</option>
+                <option value="all" style={{ backgroundColor: '#1f2937', color: 'white' }}>All Categories</option>
+                <option value="General" style={{ backgroundColor: '#1f2937', color: 'white' }}>General</option>
+                <option value="Work" style={{ backgroundColor: '#1f2937', color: 'white' }}>Work</option>
+                <option value="Personal" style={{ backgroundColor: '#1f2937', color: 'white' }}>Personal</option>
+                <option value="Study" style={{ backgroundColor: '#1f2937', color: 'white' }}>Study</option>
+                <option value="Health" style={{ backgroundColor: '#1f2937', color: 'white' }}>Health</option>
+                <option value="Finance" style={{ backgroundColor: '#1f2937', color: 'white' }}>Finance</option>
               </select>
             </div>
 
@@ -247,11 +255,15 @@ export default function TaskFilters({
                   }
                 }}
                 className="w-full px-3 py-2 bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
+                style={{
+                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                  color: 'white'
+                }}
               >
-                <option value="all">All Dates</option>
-                <option value="today">Today</option>
-                <option value="week">Next 7 Days</option>
-                <option value="month">Next 30 Days</option>
+                <option value="all" style={{ backgroundColor: '#1f2937', color: 'white' }}>All Dates</option>
+                <option value="today" style={{ backgroundColor: '#1f2937', color: 'white' }}>Today</option>
+                <option value="week" style={{ backgroundColor: '#1f2937', color: 'white' }}>Next 7 Days</option>
+                <option value="month" style={{ backgroundColor: '#1f2937', color: 'white' }}>Next 30 Days</option>
               </select>
             </div>
           </div>

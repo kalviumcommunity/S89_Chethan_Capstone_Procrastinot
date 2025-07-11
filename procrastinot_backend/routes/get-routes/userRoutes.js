@@ -1,10 +1,9 @@
 const express = require("express");
 const router = express.Router();
 const User = require("../../models/User");
-const authMiddleware = require("../../middleware/authMiddleware");
 
 // ✅ Get all users (Protected route)
-router.get("/", authMiddleware, async (req, res) => {
+router.get("/", async (req, res) => {
   try {
     const users = await User.find()
       .select("-password")
@@ -27,7 +26,7 @@ router.get("/", authMiddleware, async (req, res) => {
 });
 
 // ✅ FIXED: Get user by ID — updated route to avoid conflict with '/register' (Protected route)
-router.get("/profile/:userId", authMiddleware, async (req, res) => {
+router.get("/profile/:userId", async (req, res) => {
   try {
     const user = await User.findById(req.params.userId)
       .select("-password")

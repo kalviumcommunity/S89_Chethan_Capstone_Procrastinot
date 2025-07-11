@@ -1,11 +1,11 @@
 // src/pages/Tasks.jsx
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Plus, 
-  Calendar, 
-  List, 
-  Grid3X3, 
+import {
+  Plus,
+  Calendar,
+  List,
+  Grid3X3,
   BarChart3,
   CheckCircle,
   Clock,
@@ -19,10 +19,13 @@ import TaskForm from '../components/TaskForm';
 import TaskFilters from '../components/TaskFilters';
 import TaskCalendar from '../components/TaskCalendar';
 import { useTasks } from '../hooks/useTasks';
+import { useUser } from '../contexts/UserContext';
+import { useTheme } from '../contexts/ThemeContext';
 import clsx from 'clsx';
 
 export default function Tasks() {
-  const [currentUser] = useState({ _id: '507f1f77bcf86cd799439011' }); // Mock user ID
+  const { user, loading: userLoading } = useUser();
+  const { isDark } = useTheme();
   const [view, setView] = useState('list'); // 'list', 'calendar', 'grid'
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
@@ -43,16 +46,21 @@ export default function Tasks() {
     completeTask,
     toggleImportance,
     refetch
-  } = useTasks(currentUser._id);
+  } = useTasks(user?._id);
 
   // Handle task form submission
   const handleTaskSubmit = async (taskData) => {
+    if (!user) return;
+
     try {
       setFormLoading(true);
       if (editingTask) {
         await updateTask(editingTask._id, taskData);
       } else {
-        await createTask(taskData);
+        await createTask({
+          ...taskData,
+          userId: user._id,
+        });
       }
       setShowTaskForm(false);
       setEditingTask(null);
@@ -116,8 +124,8 @@ export default function Tasks() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-mesh text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-dark-900/50 via-primary-900/30 to-secondary-900/50" />
+      <div className={`min-h-screen ${isDark ? 'bg-mesh text-white' : 'bg-gradient-to-br from-slate-50 to-blue-50 text-gray-900'} relative overflow-hidden`}>
+        <div className={`absolute inset-0 ${isDark ? 'bg-gradient-to-br from-dark-900/50 via-primary-900/30 to-secondary-900/50' : 'bg-gradient-to-br from-blue-50/50 via-indigo-50/30 to-purple-50/50'}`} />
         <div className="relative z-10">
           <Navbar />
           <div className="pt-32 pb-20 px-6 max-w-7xl mx-auto">
@@ -133,10 +141,23 @@ export default function Tasks() {
     );
   }
 
+  // Show loading state while user data is being fetched
+  if (userLoading || !user) {
+    return (
+      <div className={`min-h-screen ${isDark ? 'bg-mesh text-white' : 'bg-gradient-to-br from-slate-50 to-blue-50 text-gray-900'} relative overflow-hidden flex items-center justify-center`}>
+        <div className={`absolute inset-0 ${isDark ? 'bg-gradient-to-br from-dark-900/50 via-primary-900/30 to-secondary-900/50' : 'bg-gradient-to-br from-blue-50/50 via-indigo-50/30 to-purple-50/50'}`} />
+        <div className="relative z-10 text-center">
+          <div className="w-16 h-16 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60">Loading your tasks...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-mesh text-white relative overflow-hidden">
+    <div className={`min-h-screen ${isDark ? 'bg-mesh text-white' : 'bg-gradient-to-br from-slate-50 to-blue-50 text-gray-900'} relative overflow-hidden`}>
       {/* Animated Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-dark-900/50 via-primary-900/30 to-secondary-900/50" />
+      <div className={`absolute inset-0 ${isDark ? 'bg-gradient-to-br from-dark-900/50 via-primary-900/30 to-secondary-900/50' : 'bg-gradient-to-br from-blue-50/50 via-indigo-50/30 to-purple-50/50'}`} />
 
       {/* Content */}
       <div className="relative z-10">

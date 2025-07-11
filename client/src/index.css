@@ -9,8 +9,23 @@
     box-sizing: border-box;
   }
 
+  /* Dark theme (default) */
+  html.dark body {
+    @apply bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 font-sans antialiased text-white;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+  }
+
+  /* Light theme */
+  html.light body {
+    @apply bg-gradient-to-br from-slate-50 to-blue-50 font-sans antialiased text-gray-900;
+    font-feature-settings: 'cv11', 'ss01';
+    font-variation-settings: 'opsz' 32;
+  }
+
+  /* Fallback for no theme class */
   body {
-    @apply bg-gradient-to-br from-slate-50 to-blue-50 font-sans antialiased;
+    @apply bg-gradient-to-br from-dark-900 via-dark-800 to-dark-900 font-sans antialiased text-white;
     font-feature-settings: 'cv11', 'ss01';
     font-variation-settings: 'opsz' 32;
   }
@@ -21,7 +36,25 @@
 }
 
 @layer components {
-  /* Glass morphism utilities */
+  /* Glass morphism utilities - Dark theme */
+  html.dark .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  html.dark .glass-dark {
+    @apply bg-black/10 backdrop-blur-md border border-white/10;
+  }
+
+  /* Glass morphism utilities - Light theme */
+  html.light .glass {
+    @apply bg-black/5 backdrop-blur-md border border-gray-200/50;
+  }
+
+  html.light .glass-dark {
+    @apply bg-white/80 backdrop-blur-md border border-gray-200;
+  }
+
+  /* Fallback glass styles */
   .glass {
     @apply bg-white/10 backdrop-blur-md border border-white/20;
   }
@@ -43,27 +76,65 @@
     @apply glass hover:bg-white/20 text-white font-semibold py-3 px-6 rounded-xl shadow-glass hover:shadow-xl transform hover:scale-105 transition-all duration-200;
   }
 
-  /* Modern card styles */
+  /* Modern card styles - Dark theme */
+  html.dark .card-modern {
+    @apply bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl shadow-glass hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Modern card styles - Light theme */
+  html.light .card-modern {
+    @apply bg-white/90 backdrop-blur-sm border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300;
+  }
+
+  /* Fallback modern card styles */
   .card-modern {
-    @apply bg-white/80 backdrop-blur-sm border border-white/20 rounded-2xl shadow-glass hover:shadow-xl transition-all duration-300;
+    @apply bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl shadow-glass hover:shadow-xl transition-all duration-300;
   }
 
   .card-glass {
     @apply glass rounded-2xl shadow-glass hover:shadow-xl transition-all duration-300;
   }
 
-  /* Input styles */
-  .input-modern {
-    @apply w-full px-4 py-3 bg-white/50 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200;
+  /* Input styles - Dark theme */
+  html.dark .input-modern {
+    @apply w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white placeholder-white/60;
   }
 
-  /* Gradient text */
-  .text-gradient {
+  /* Input styles - Light theme */
+  html.light .input-modern {
+    @apply w-full px-4 py-3 bg-white/80 backdrop-blur-sm border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-gray-900 placeholder-gray-500;
+  }
+
+  /* Fallback input styles */
+  .input-modern {
+    @apply w-full px-4 py-3 bg-white/10 backdrop-blur-sm border border-white/30 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-white placeholder-white/60;
+  }
+
+  /* Gradient text - Dark theme */
+  html.dark .text-gradient {
+    @apply bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent;
+  }
+
+  html.dark .text-gradient-accent {
+    @apply bg-gradient-to-r from-accent-400 to-secondary-400 bg-clip-text text-transparent;
+  }
+
+  /* Gradient text - Light theme */
+  html.light .text-gradient {
     @apply bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent;
   }
 
+  html.light .text-gradient-accent {
+    @apply bg-gradient-to-r from-accent-600 to-secondary-600 bg-clip-text text-transparent;
+  }
+
+  /* Fallback gradient text */
+  .text-gradient {
+    @apply bg-gradient-to-r from-primary-400 to-secondary-400 bg-clip-text text-transparent;
+  }
+
   .text-gradient-accent {
-    @apply bg-gradient-to-r from-accent-500 to-secondary-500 bg-clip-text text-transparent;
+    @apply bg-gradient-to-r from-accent-400 to-secondary-400 bg-clip-text text-transparent;
   }
 
   /* Animated backgrounds */

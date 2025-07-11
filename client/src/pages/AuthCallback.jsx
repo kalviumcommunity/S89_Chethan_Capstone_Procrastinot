@@ -1,15 +1,18 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { storeAuthData } from '../utils/auth';
+import { jwtDecode } from 'jwt-decode';
+import tokenMonitor from '../services/tokenMonitor';
 
 const AuthCallback = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState('');
-  
+
   useEffect(() => {
     const token = searchParams.get('token');
     const error = searchParams.get('error');
-    
+
     if (error) {
       setError(decodeURIComponent(error));
       setTimeout(() => navigate('/login'), 3000);
@@ -18,10 +21,20 @@ const AuthCallback = () => {
 
     if (token) {
       try {
-        localStorage.setItem('token', token);
+        // Decode token to get user ID
+        const decoded = jwtDecode(token);
+        const userId = decoded.id;
+
+        if (!userId) {
+          throw new Error('Invalid token: no user ID found');
+        }
+
+        // Store both token and userId properly
+        storeAuthData(token, userId);
+        tokenMonitor.startMonitoring(); // Start token monitoring after OAuth login
         navigate('/dashboard');
       } catch (err) {
-        console.error('Error storing token:', err);
+        console.error('Error processing authentication token:', err);
         setError('Failed to complete authentication');
         setTimeout(() => navigate('/login'), 3000);
       }

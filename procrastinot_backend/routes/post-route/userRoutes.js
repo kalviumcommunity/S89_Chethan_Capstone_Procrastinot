@@ -21,7 +21,7 @@ const validateJWTSecret = () => {
 const generateToken = (userId) => {
   validateJWTSecret();
   return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: "7d",
+    expiresIn: "7d", // 7 days - long enough for persistent sessions
   });
 };
 
@@ -155,6 +155,60 @@ router.post("/login", authLimiter, async (req, res) => {
   } catch (err) {
     console.error("Login error:", err);
     res.status(500).json({ message: "Login failed" });
+  }
+});
+
+// 🔄 Refresh Token
+router.post("/refresh-token", async (req, res) => {
+  try {
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      return res.status(401).json({ message: "No token provided" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({ message: "User ID is required" });
+    }
+
+    // Verify the current token (even if expired, we can still decode it)
+    let decoded;
+    try {
+      decoded = jwt.verify(token, process.env.JWT_SECRET);
+    } catch (err) {
+      // If token is expired, we can still decode it to check the user
+      if (err.name === 'TokenExpiredError') {
+        decoded = jwt.decode(token);
+      } else {
+        return res.status(401).json({ message: "Invalid token" });
+      }
+    }
+
+    // Verify the user ID matches the token
+    if (decoded.id !== userId) {
+      return res.status(401).json({ message: "Token user mismatch" });
+    }
+
+    // Check if user still exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate new token
+    const newToken = generateToken(userId);
+
+    res.json({
+      token: newToken,
+      message: "Token refreshed successfully"
+    });
+
+  } catch (err) {
+    console.error("Token refresh error:", err);
+    res.status(500).json({ message: "Token refresh failed" });
   }
 });
 

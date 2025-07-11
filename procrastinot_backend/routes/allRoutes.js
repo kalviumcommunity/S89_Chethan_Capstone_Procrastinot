@@ -7,17 +7,19 @@ const authMiddleware = require("../middleware/authMiddleware"); // Import JWT mi
 // =========================
 
 // User routes: Register & Login remain public
-const userPostRoutes = require("./post-route/userRoutes"); 
+const userPostRoutes = require("./post-route/userRoutes");
 const userGetRoutes = require("./get-routes/userRoutes");
 
 router.use("/users", userPostRoutes); // Register & Login (no auth required)
-router.use("/users", userGetRoutes);  // GET /users and /users/:userId
 
 // ============================
 // ✅ PROTECTED ROUTES (AUTH)
 // ============================
 // Apply authentication ONLY after public routes
-router.use(authMiddleware); 
+router.use(authMiddleware);
+
+// ✅ Authenticated User Routes
+router.use("/users", userGetRoutes);  // GET /users and /users/profile/:userId (protected)
 
 // ✅ Authenticated GET Routes
 router.use("/tasks", require("./get-routes/taskRoutes"));

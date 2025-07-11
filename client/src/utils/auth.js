@@ -17,9 +17,16 @@ export const storeAuthData = (token, userId) => {
     if (!token || !userId) {
       throw new Error('Token and userId are required');
     }
-    
+
+    // Store in localStorage for persistence across browser sessions
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(USER_ID_KEY, userId);
+
+    // Also store in sessionStorage as backup
+    sessionStorage.setItem(TOKEN_KEY, token);
+    sessionStorage.setItem(USER_ID_KEY, userId);
+
+    console.log('🔐 Auth data stored successfully');
   } catch (error) {
     console.error('Error storing auth data:', error);
     throw new Error('Failed to store authentication data');
@@ -32,7 +39,8 @@ export const storeAuthData = (token, userId) => {
  */
 export const getToken = () => {
   try {
-    return localStorage.getItem(TOKEN_KEY);
+    // Try localStorage first, then sessionStorage as fallback
+    return localStorage.getItem(TOKEN_KEY) || sessionStorage.getItem(TOKEN_KEY);
   } catch (error) {
     console.error('Error getting token:', error);
     return null;
@@ -45,7 +53,8 @@ export const getToken = () => {
  */
 export const getUserId = () => {
   try {
-    return localStorage.getItem(USER_ID_KEY);
+    // Try localStorage first, then sessionStorage as fallback
+    return localStorage.getItem(USER_ID_KEY) || sessionStorage.getItem(USER_ID_KEY);
   } catch (error) {
     console.error('Error getting user ID:', error);
     return null;
@@ -58,23 +67,51 @@ export const getUserId = () => {
  */
 export const isAuthenticated = () => {
   const token = getToken();
-  if (!token) return false;
-  
+  if (!token) {
+    console.log('🔐 No token found');
+    return false;
+  }
+
   try {
     const decoded = jwtDecode(token);
     const currentTime = Date.now() / 1000;
-    
+    const timeUntilExpiry = decoded.exp - currentTime;
+
+    console.log(`🔐 Token expires in ${Math.round(timeUntilExpiry / 3600)} hours`);
+
     // Check if token is expired
     if (decoded.exp < currentTime) {
+      console.log('🔐 Token expired, clearing auth data');
       clearAuthData();
       return false;
     }
-    
+
     return true;
   } catch (error) {
     console.error('Error validating token:', error);
     clearAuthData();
     return false;
+  }
+};
+
+/**
+ * Check if token is expired or will expire soon
+ * @param {number} bufferMinutes - Minutes before expiration to consider token as expired
+ * @returns {boolean} True if token is expired or will expire soon
+ */
+export const isTokenExpired = (bufferMinutes = 0) => {
+  const token = getToken();
+  if (!token) return true;
+
+  try {
+    const decoded = jwtDecode(token);
+    const currentTime = Date.now() / 1000;
+    const bufferTime = bufferMinutes * 60; // Convert minutes to seconds
+
+    return decoded.exp < (currentTime + bufferTime);
+  } catch (error) {
+    console.error('Error checking token expiration:', error);
+    return true;
   }
 };
 
@@ -85,16 +122,16 @@ export const isAuthenticated = () => {
 export const getUserFromToken = () => {
   const token = getToken();
   if (!token) return null;
-  
+
   try {
     const decoded = jwtDecode(token);
     const currentTime = Date.now() / 1000;
-    
+
     if (decoded.exp < currentTime) {
       clearAuthData();
       return null;
     }
-    
+
     return {
       id: decoded.id,
       exp: decoded.exp,
@@ -114,9 +151,68 @@ export const clearAuthData = () => {
   try {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_ID_KEY);
+    sessionStorage.removeItem(TOKEN_KEY);
+    sessionStorage.removeItem(USER_ID_KEY);
+    console.log('🔐 Auth data cleared');
   } catch (error) {
     console.error('Error clearing auth data:', error);
   }
+};
+
+/**
+ * Refresh authentication token
+ * @returns {Promise<string|null>} New token or null if refresh failed
+ */
+export const refreshToken = async () => {
+  const currentToken = getToken();
+  const userId = getUserId();
+
+  if (!currentToken || !userId) {
+    return null;
+  }
+
+  try {
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
+    const response = await fetch(`${API_URL}/api/users/refresh-token`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentToken}`
+      },
+      body: JSON.stringify({ userId })
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      if (data.token) {
+        storeAuthData(data.token, userId);
+        return data.token;
+      }
+    }
+
+    // If refresh fails, clear auth data
+    clearAuthData();
+    return null;
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    clearAuthData();
+    return null;
+  }
+};
+
+/**
+ * Check and refresh token if needed
+ * @returns {Promise<boolean>} True if token is valid or successfully refreshed
+ */
+export const ensureValidToken = async () => {
+  // Only refresh if token is actually expired (not just close to expiring)
+  if (!isTokenExpired(0)) {
+    return true; // Token is still valid
+  }
+
+  console.log('🔄 Token expired, attempting refresh...');
+  const newToken = await refreshToken();
+  return newToken !== null;
 };
 
 /**

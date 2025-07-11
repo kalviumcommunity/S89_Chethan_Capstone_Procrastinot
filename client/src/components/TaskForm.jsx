@@ -193,11 +193,15 @@ export default function TaskForm({
                       value={formData.priority}
                       onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value }))}
                       className="input-modern text-white"
+                      style={{
+                        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                        color: 'white'
+                      }}
                     >
-                      <option value="Low">Low</option>
-                      <option value="Medium">Medium</option>
-                      <option value="High">High</option>
-                      <option value="Urgent">Urgent</option>
+                      <option value="Low" style={{ backgroundColor: '#1f2937', color: 'white' }}>Low</option>
+                      <option value="Medium" style={{ backgroundColor: '#1f2937', color: 'white' }}>Medium</option>
+                      <option value="High" style={{ backgroundColor: '#1f2937', color: 'white' }}>High</option>
+                      <option value="Urgent" style={{ backgroundColor: '#1f2937', color: 'white' }}>Urgent</option>
                     </select>
                   </div>
 
@@ -334,12 +338,16 @@ export default function TaskForm({
                       recurrence: { ...prev.recurrence, type: e.target.value }
                     }))}
                     className="input-modern text-white"
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                      color: 'white'
+                    }}
                   >
-                    <option value="none">No Repeat</option>
-                    <option value="daily">Daily</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="monthly">Monthly</option>
-                    <option value="yearly">Yearly</option>
+                    <option value="none" style={{ backgroundColor: '#1f2937', color: 'white' }}>No Repeat</option>
+                    <option value="daily" style={{ backgroundColor: '#1f2937', color: 'white' }}>Daily</option>
+                    <option value="weekly" style={{ backgroundColor: '#1f2937', color: 'white' }}>Weekly</option>
+                    <option value="monthly" style={{ backgroundColor: '#1f2937', color: 'white' }}>Monthly</option>
+                    <option value="yearly" style={{ backgroundColor: '#1f2937', color: 'white' }}>Yearly</option>
                   </select>
                 </div>
 

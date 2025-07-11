@@ -1,13 +1,16 @@
 // src/components/Auth/
 import React from "react";
 import { motion } from "framer-motion";
+import { useTheme } from "../../contexts/ThemeContext";
 
 const AuthLayout = ({ children, title }) => {
+  const { isDark } = useTheme();
+
   return (
-    <div className="min-h-screen flex">
+    <div className={`min-h-screen flex ${isDark ? 'bg-dark-900' : 'bg-gray-50'}`}>
       {/* Left Side - Branding or Illustration */}
       <motion.div
-        className="hidden md:flex w-1/2 bg-gradient-to-tr from-purple-600 to-indigo-900 text-white items-center justify-center p-10"
+        className={`hidden md:flex w-1/2 ${isDark ? 'bg-gradient-to-tr from-purple-600 to-indigo-900 text-white' : 'bg-gradient-to-tr from-blue-500 to-purple-600 text-white'} items-center justify-center p-10`}
         initial={{ opacity: 0, x: -50 }}
         animate={{ opacity: 1, x: 0 }}
       >
@@ -18,9 +21,9 @@ const AuthLayout = ({ children, title }) => {
       </motion.div>
 
       {/* Right Side - Form */}
-      <div className="w-full md:w-1/2 flex items-center justify-center p-8">
+      <div className={`w-full md:w-1/2 flex items-center justify-center p-8 ${isDark ? 'bg-dark-800' : 'bg-white'}`}>
         <div className="w-full max-w-md">
-          <h2 className="text-2xl font-semibold text-center mb-6">{title}</h2>
+          <h2 className={`text-2xl font-semibold text-center mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>{title}</h2>
           {children}
         </div>
       </div>

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { storeAuthData, clearAuthData, handleAuthError } from '../utils/auth';
+import { storeAuthData, clearAuthData, handleAuthError, getToken, ensureValidToken } from '../utils/auth';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8080';
 
@@ -88,12 +88,19 @@ class AuthService {
    */
   async getCurrentUser() {
     try {
+      // Ensure token is valid before making request
+      const tokenValid = await ensureValidToken();
+      if (!tokenValid) {
+        this.logout();
+        throw new Error('Authentication required');
+      }
+
       const response = await axios.get(`${API_URL}/api/users/profile`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`
+          Authorization: `Bearer ${getToken()}`
         }
       });
-      
+
       return response.data;
     } catch (error) {
       if (error.response?.status === 401) {
@@ -101,6 +108,14 @@ class AuthService {
       }
       throw new Error(handleAuthError(error));
     }
+  }
+
+  /**
+   * Check if user is authenticated and token is valid
+   * @returns {Promise<boolean>} True if authenticated
+   */
+  async isAuthenticated() {
+    return await ensureValidToken();
   }
 
   /**

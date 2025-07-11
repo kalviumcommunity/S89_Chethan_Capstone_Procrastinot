@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import clsx from "clsx";
-import confetti from "canvas-confetti";
-import { Play, Pause, RotateCcw } from "lucide-react";
+import { Play, Pause, RotateCcw, User, Heart } from "lucide-react";
+import { usePomodoro } from "../hooks/usePomodoro";
+import { useUser } from "../contexts/UserContext";
+import { useTasks } from "../hooks/useTasks";
 
 const MODES = {
   work: { label: "Work", duration: 25 * 60 },
@@ -10,64 +11,121 @@ const MODES = {
   long: { label: "Long Break", duration: 15 * 60 },
 };
 
-const chime = new Audio("/assets/preview.mp3");
+const MOOD_OPTIONS = [
+  { value: 'Happy', emoji: '😊', color: 'text-green-400' },
+  { value: 'Neutral', emoji: '😐', color: 'text-gray-400' },
+  { value: 'Anxious', emoji: '😰', color: 'text-yellow-400' },
+  { value: 'Excited', emoji: '🤩', color: 'text-purple-400' },
+  { value: 'Sad', emoji: '😢', color: 'text-blue-400' },
+];
 
 export default function PomodoroTimer() {
-  const [mode, setMode] = useState("work");
-  const [timeLeft, setTimeLeft] = useState(MODES[mode].duration);
-  const [isRunning, setIsRunning] = useState(false);
-  const intervalRef = useRef(null);
+  const { user } = useUser();
+  const { tasks } = useTasks(user?._id);
 
-  useEffect(() => {
-    if (Notification.permission !== "granted") Notification.requestPermission();
-  }, []);
+  const {
+    mode,
+    timeLeft,
+    isRunning,
+    currentSession,
+    formatTime,
+    selectedTask,
+    moodBefore,
+    moodAfter,
+    startTimer,
+    pauseTimer,
+    resetTimer,
+    changeMode,
+    setTaskForSession,
+    setMoodBeforeSession,
+    setMoodAfterSession,
+    progress,
+    isWorkMode,
+    canStart,
+    canPause,
+    canReset,
+    error,
+  } = usePomodoro(user?._id);
 
-  const formatTime = (seconds) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  };
-
-  useEffect(() => {
-    setTimeLeft(MODES[mode].duration);
-    setIsRunning(false);
-    clearInterval(intervalRef.current);
-  }, [mode]);
-
-  const handleSessionCompletion = () => {
-    confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-    chime.play();
-    if (Notification.permission === "granted") {
-      new Notification("Pomodoro Complete! 🎉", {
-        body: `You completed a ${MODES[mode].label.toLowerCase()} session.`,
-        icon: "/favicon.ico",
-      });
-    }
-    setIsRunning(false);
-  };
-
-  useEffect(() => {
-    if (isRunning) {
-      intervalRef.current = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev === 0) {
-            clearInterval(intervalRef.current);
-            handleSessionCompletion();
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-    } else {
-      clearInterval(intervalRef.current);
-    }
-    return () => clearInterval(intervalRef.current);
-  }, [isRunning, handleSessionCompletion]);
+  // Show error if any
+  if (error) {
+    console.error('Pomodoro error:', error);
+  }
 
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="card-glass p-8 md:p-12">
+        {/* Task Selection for Work Mode */}
+        {isWorkMode && (
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <User className="w-5 h-5 text-primary-400" />
+              <h3 className="text-lg font-semibold text-white">Focus on a Task (Optional)</h3>
+            </div>
+            <select
+              value={selectedTask?._id || ''}
+              onChange={(e) => {
+                const task = tasks?.find(t => t._id === e.target.value);
+                setTaskForSession(task || null);
+              }}
+              className="w-full p-3 rounded-xl bg-white/10 border border-white/20 text-white focus:border-primary-400 focus:outline-none"
+              style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                color: 'white'
+              }}
+              disabled={isRunning}
+            >
+              <option value="" style={{ backgroundColor: '#1f2937', color: 'white' }}>No specific task</option>
+              {tasks?.filter(task => task.status !== 'Completed').map(task => (
+                <option key={task._id} value={task._id} style={{ backgroundColor: '#1f2937', color: 'white' }}>
+                  {task.title}
+                </option>
+              ))}
+            </select>
+          </motion.div>
+        )}
 
+        {/* Mood Selection */}
+        {isWorkMode && (
+          <motion.div
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <Heart className="w-5 h-5 text-primary-400" />
+              <h3 className="text-lg font-semibold text-white">How are you feeling?</h3>
+            </div>
+            <div className="flex gap-3 flex-wrap">
+              {MOOD_OPTIONS.map(mood => (
+                <motion.button
+                  key={mood.value}
+                  onClick={() => isRunning ? setMoodAfterSession(mood.value) : setMoodBeforeSession(mood.value)}
+                  className={clsx(
+                    "flex items-center gap-2 px-4 py-2 rounded-xl transition-all duration-200",
+                    (isRunning ? moodAfter : moodBefore) === mood.value
+                      ? "bg-primary-500/30 border-2 border-primary-400"
+                      : "bg-white/10 border-2 border-transparent hover:bg-white/20"
+                  )}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <span className="text-xl">{mood.emoji}</span>
+                  <span className={clsx("text-sm font-medium", mood.color)}>{mood.value}</span>
+                </motion.button>
+              ))}
+            </div>
+            <p className="text-white/60 text-sm mt-2">
+              {isRunning ? "How do you feel now?" : "Set your mood before starting"}
+            </p>
+          </motion.div>
+        )}
 
         {/* Mode Selector */}
         <motion.div
@@ -79,7 +137,7 @@ export default function PomodoroTimer() {
           {Object.entries(MODES).map(([key, value]) => (
             <motion.button
               key={key}
-              onClick={() => setMode(key)}
+              onClick={() => changeMode(key)}
               className={clsx(
                 "px-6 py-3 rounded-2xl font-semibold transition-all duration-300 relative overflow-hidden",
                 mode === key
@@ -88,6 +146,7 @@ export default function PomodoroTimer() {
               )}
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
+              disabled={isRunning}
             >
               <span className="relative z-10">{value.label}</span>
               {mode === key && (
@@ -132,7 +191,7 @@ export default function PomodoroTimer() {
                 strokeWidth="8"
                 fill="none"
                 strokeDasharray={2 * Math.PI * (0.45 * 320)}
-                strokeDashoffset={(1 - timeLeft / MODES[mode].duration) * 2 * Math.PI * (0.45 * 320)}
+                strokeDashoffset={(1 - progress) * 2 * Math.PI * (0.45 * 320)}
                 strokeLinecap="round"
                 className="transition-all duration-1000 ease-out"
               />
@@ -171,22 +230,20 @@ export default function PomodoroTimer() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
         >
-          {!isRunning ? (
+          {canStart ? (
             <motion.button
-              onClick={() => {
-                setIsRunning(true);
-                setStartTime(new Date());
-              }}
-              className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
+              onClick={startTimer}
+              disabled={!user}
+              className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
             >
               <Play size={24} />
-              <span>Start Focus</span>
+              <span>{isWorkMode ? 'Start Focus' : 'Start Break'}</span>
             </motion.button>
           ) : (
             <motion.button
-              onClick={() => setIsRunning(false)}
+              onClick={pauseTimer}
               className="flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-yellow-500 to-orange-500 text-white rounded-2xl font-semibold shadow-lg hover:shadow-xl transition-all duration-200"
               whileHover={{ scale: 1.05, y: -2 }}
               whileTap={{ scale: 0.95 }}
@@ -197,11 +254,9 @@ export default function PomodoroTimer() {
           )}
 
           <motion.button
-            onClick={() => {
-              setIsRunning(false);
-              setTimeLeft(MODES[mode].duration);
-            }}
-            className="flex items-center justify-center gap-3 px-8 py-4 glass text-white rounded-2xl font-semibold hover:bg-white/20 transition-all duration-200"
+            onClick={resetTimer}
+            disabled={!canReset}
+            className="flex items-center justify-center gap-3 px-8 py-4 glass text-white rounded-2xl font-semibold hover:bg-white/20 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             whileHover={{ scale: 1.05, y: -2 }}
             whileTap={{ scale: 0.95 }}
           >
@@ -209,6 +264,37 @@ export default function PomodoroTimer() {
             <span>Reset</span>
           </motion.button>
         </motion.div>
+
+        {/* Current Session Info */}
+        {currentSession && (
+          <motion.div
+            className="mt-8 p-4 bg-white/10 rounded-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+          >
+            <div className="text-center">
+              <p className="text-white/70 text-sm mb-2">Current Session</p>
+              {selectedTask && (
+                <p className="text-white font-medium mb-1">📝 {selectedTask.title}</p>
+              )}
+              <p className="text-primary-400 text-sm">
+                Mood: {MOOD_OPTIONS.find(m => m.value === moodBefore)?.emoji} {moodBefore}
+              </p>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Error Display */}
+        {error && (
+          <motion.div
+            className="mt-4 p-4 bg-red-500/20 border border-red-500/30 rounded-xl"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+          >
+            <p className="text-red-300 text-sm text-center">{error}</p>
+          </motion.div>
+        )}
       </div>
 
 

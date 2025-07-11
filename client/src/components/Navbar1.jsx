@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
   Moon,
+  Sun,
   Bell,
   User,
   Settings,
@@ -16,9 +17,15 @@ import {
   BookOpen,
   Trophy
 } from "lucide-react";
+import { useUser } from "../contexts/UserContext";
+import { useTheme } from "../contexts/ThemeContext";
+import { clearAuthData } from "../utils/auth";
+import tokenMonitor from "../services/tokenMonitor";
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const { user } = useUser();
+  const { theme, isDark, toggleTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [notifications] = useState(3); // Mock notification count
@@ -36,8 +43,11 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    navigate('/');
+    // Properly clear all auth data and stop monitoring
+    clearAuthData();
+    tokenMonitor.stopMonitoring();
+    console.log('🔐 User logged out');
+    navigate('/login');
   };
 
   const navLinks = [
@@ -121,11 +131,17 @@ export default function Navbar() {
 
           {/* Theme Toggle */}
           <motion.button
-            className="p-2 rounded-xl glass hover:bg-white/20 text-white/80 hover:text-white transition-all duration-200"
+            onClick={toggleTheme}
+            className={`p-2 rounded-xl glass transition-all duration-200 ${
+              isDark
+                ? 'hover:bg-white/20 text-white/80 hover:text-white'
+                : 'hover:bg-black/10 text-gray-600 hover:text-gray-900'
+            }`}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
+            title={`Switch to ${isDark ? 'light' : 'dark'} mode`}
           >
-            <Moon size={20} />
+            {isDark ? <Sun size={20} /> : <Moon size={20} />}
           </motion.button>
 
           {/* Profile Dropdown */}
@@ -137,9 +153,19 @@ export default function Navbar() {
               whileTap={{ scale: 0.95 }}
             >
               <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary-400 to-secondary-400 flex items-center justify-center text-white font-semibold text-sm">
-                C
+                {user?.profilePicture ? (
+                  <img
+                    src={user.profilePicture}
+                    alt="Profile"
+                    className="w-full h-full rounded-full object-cover"
+                  />
+                ) : (
+                  user?.username?.charAt(0).toUpperCase() || 'U'
+                )}
               </div>
-              <span className="hidden md:block text-white/80 font-medium">Chethan</span>
+              <span className="hidden md:block text-white/80 font-medium">
+                {user?.username || 'User'}
+              </span>
             </motion.button>
           </div>
 

@@ -5,9 +5,12 @@ import api from "../services/api";
 import { motion } from "framer-motion";
 import GoogleLoginButton from "../components/GoogleLoginButton";
 import { storeAuthData, handleAuthError, isValidEmail, validatePassword } from "../utils/auth";
+import tokenMonitor from "../services/tokenMonitor";
+import { useTheme } from "../contexts/ThemeContext";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
+  const { isDark } = useTheme();
   const [form, setForm] = useState({
     username: "",
     email: "",
@@ -55,10 +58,11 @@ const RegisterForm = () => {
     }
 
     try {
-      const res = await api.post('/api/users/register', form);
+      const res = await api.post('/users/register', form);
 
       if (res.data.token && res.data.userId) {
         storeAuthData(res.data.token, res.data.userId);
+        tokenMonitor.startMonitoring(); // Start token monitoring after registration
         navigate("/dashboard");
       } else {
         throw new Error("Invalid response from server");

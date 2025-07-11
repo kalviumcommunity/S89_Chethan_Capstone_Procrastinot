@@ -35,10 +35,7 @@ export const useTasks = (userId) => {
   // Create task
   const createTask = async (taskData) => {
     try {
-      const newTask = await taskService.createTask({
-        ...taskData,
-        userId,
-      });
+      const newTask = await taskService.createTask(taskData);
       setTasks(prev => [newTask.task, ...prev]);
       return newTask;
     } catch (err) {
@@ -68,6 +65,7 @@ export const useTasks = (userId) => {
     try {
       await taskService.deleteTask(taskId);
       setTasks(prev => prev.filter(task => task._id !== taskId));
+      console.log('🗑️ Task deleted successfully');
     } catch (err) {
       setError(err.message);
       throw err;
@@ -78,13 +76,14 @@ export const useTasks = (userId) => {
   const completeTask = async (taskId) => {
     try {
       const updatedTask = await taskService.completeTask(taskId);
-      setTasks(prev => 
-        prev.map(task => 
-          task._id === taskId 
+      setTasks(prev =>
+        prev.map(task =>
+          task._id === taskId
             ? { ...task, status: 'Completed', completedAt: new Date() }
             : task
         )
       );
+      console.log('✅ Task completed successfully');
       return updatedTask;
     } catch (err) {
       setError(err.message);
@@ -112,6 +111,16 @@ export const useTasks = (userId) => {
 
   // Filter tasks
   const filteredTasks = tasks.filter(task => {
+    // Hide completed tasks unless specifically filtering for them
+    if (task.status === 'Completed' && filters.status !== 'Completed') {
+      return false;
+    }
+
+    // Hide deleted tasks (if they have a deleted flag)
+    if (task.isDeleted) {
+      return false;
+    }
+
     // Status filter
     if (filters.status !== 'all' && task.status !== filters.status) {
       return false;
@@ -137,10 +146,10 @@ export const useTasks = (userId) => {
       const searchLower = filters.search.toLowerCase();
       const titleMatch = task.title.toLowerCase().includes(searchLower);
       const descMatch = task.description?.toLowerCase().includes(searchLower);
-      const tagMatch = task.tags?.some(tag => 
+      const tagMatch = task.tags?.some(tag =>
         tag.toLowerCase().includes(searchLower)
       );
-      
+
       if (!titleMatch && !descMatch && !tagMatch) {
         return false;
       }
