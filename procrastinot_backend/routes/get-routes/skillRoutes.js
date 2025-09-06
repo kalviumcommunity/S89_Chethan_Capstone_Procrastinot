@@ -17,6 +17,20 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ Get skills by user
+router.get("/user/:userId", async (req, res) => {
+  try {
+    const skills = await Skill.find({ userId: req.params.userId });
+    res.status(200).json({
+      message: "Skills retrieved successfully",
+      count: skills.length,
+      skills: skills
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to fetch user skills." });
+  }
+});
+
 // ✅ Get skills by category
 router.get("/category/:category", async (req, res) => {
   try {

@@ -8,8 +8,11 @@ router.post('/', async (req, res) => {
   try {
     const {
       userId,
+      name,
+      description,
       category,
       subTopic,
+      level,
       progress,
       streak,
       lastStudiedAt,
@@ -18,14 +21,17 @@ router.post('/', async (req, res) => {
     } = req.body;
 
     // Validate required fields
-    if (!userId || !category || !subTopic) {
-      return res.status(400).json({ message: 'userId, category, and subTopic are required' });
+    if (!userId || !name || !category || !subTopic) {
+      return res.status(400).json({ message: 'userId, name, category, and subTopic are required' });
     }
 
     const newSkill = new Skill({
       userId,
+      name,
+      description,
       category,
       subTopic,
+      level,
       progress: progress || 0,
       streak: streak || 0,
       lastStudiedAt,

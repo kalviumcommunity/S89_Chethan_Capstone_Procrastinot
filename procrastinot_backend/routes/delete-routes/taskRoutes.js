@@ -19,8 +19,8 @@ router.delete("/:id", async (req, res) => {
       { $pull: { tasks: deletedTask._id } }
     );
 
-    // Delete the task
-    await deletedTask.remove();
+    // Delete the task using the modern method
+    await Task.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       message: 'Task deleted successfully',
