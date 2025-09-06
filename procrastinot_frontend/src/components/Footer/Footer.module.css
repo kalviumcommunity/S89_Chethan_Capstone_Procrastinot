@@ -1,0 +1,337 @@
+.footer {
+  background: linear-gradient(
+    180deg,
+    var(--color-background) 0%,
+    rgba(0, 0, 0, 0.9) 100%
+  );
+  border-top: 1px solid var(--color-glass-border);
+  padding: var(--spacing-3xl) 0 var(--spacing-lg) 0;
+  position: relative;
+}
+
+.footer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-primary) 50%,
+    transparent 100%
+  );
+}
+
+.footerContent {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: var(--spacing-2xl);
+  margin-bottom: var(--spacing-2xl);
+}
+
+.brandSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.brandName {
+  margin-bottom: var(--spacing-xs);
+  font-family: var(--font-secondary);
+}
+
+.brandTagline {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-md);
+  font-style: italic;
+}
+
+.samuraiAccent {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-top: var(--spacing-sm);
+}
+
+.accentLine {
+  width: 20px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+}
+
+.accentDot {
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+}
+
+.linksSection {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-xl);
+}
+
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+}
+
+.linkTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+  position: relative;
+}
+
+.linkTitle::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 30px;
+  height: 2px;
+  background: var(--color-primary);
+}
+
+.linkList {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.link {
+  color: var(--color-text-secondary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: all var(--transition-normal);
+  position: relative;
+  padding-left: 0;
+}
+
+.link:hover {
+  color: var(--color-primary);
+  padding-left: var(--spacing-xs);
+}
+
+.link::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 0;
+  height: 1px;
+  background: var(--color-primary);
+  transition: width var(--transition-normal);
+  transform: translateY(-50%);
+}
+
+.link:hover::before {
+  width: 4px;
+}
+
+.socialSection {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.socialTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-md);
+}
+
+.socialLinks {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
+}
+
+.socialLink {
+  display: block;
+  transition: transform var(--transition-normal);
+}
+
+.socialLink:hover {
+  transform: translateY(-2px);
+}
+
+.socialIcon {
+  width: 40px;
+  height: 40px;
+  background: var(--color-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.socialIcon:hover {
+  background: rgba(220, 38, 38, 0.2);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
+}
+
+.twitterIcon,
+.githubIcon,
+.linkedinIcon,
+.discordIcon {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.twitterIcon::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 12px;
+  background: var(--color-text-primary);
+  clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+  border-radius: 2px;
+}
+
+.githubIcon::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--color-text-primary);
+  border-radius: 50% 50% 0 0;
+}
+
+.githubIcon::before {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  width: 8px;
+  height: 6px;
+  background: var(--color-text-primary);
+  transform: translateX(-50%);
+}
+
+.linkedinIcon::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  background: var(--color-text-primary);
+  border-radius: var(--radius-sm);
+}
+
+.discordIcon::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 12px;
+  background: var(--color-text-primary);
+  border-radius: 8px 8px 4px 4px;
+}
+
+.contactInfo {
+  text-align: right;
+}
+
+.email {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.location {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--color-glass-border);
+}
+
+.copyrightText {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+}
+
+.philosophyText {
+  font-size: 0.8rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+  max-width: 400px;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .footerContent {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xl);
+    text-align: center;
+  }
+  
+  .brandSection {
+    align-items: center;
+  }
+  
+  .linksSection {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-lg);
+  }
+  
+  .socialSection {
+    align-items: center;
+  }
+  
+  .contactInfo {
+    text-align: center;
+  }
+  
+  .footerBottom {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+  
+  .philosophyText {
+    text-align: center;
+    max-width: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .footer {
+    padding: var(--spacing-2xl) 0 var(--spacing-md) 0;
+  }
+  
+  .footerContent {
+    gap: var(--spacing-lg);
+  }
+  
+  .linksSection {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-md);
+  }
+  
+  .linkGroup {
+    text-align: center;
+  }
+  
+  .socialLinks {
+    justify-content: center;
+  }
+}

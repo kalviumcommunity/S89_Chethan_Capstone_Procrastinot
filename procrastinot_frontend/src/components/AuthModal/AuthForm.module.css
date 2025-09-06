@@ -1,0 +1,211 @@
+.authForm {
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.title {
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-primary);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.formOptions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: var(--spacing-sm) 0;
+}
+
+.checkbox {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+}
+
+.checkbox input[type="checkbox"] {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  width: 18px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+  margin-right: var(--spacing-xs);
+  position: relative;
+  transition: all var(--transition-normal);
+}
+
+.checkbox input[type="checkbox"]:checked + .checkmark {
+  background: var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.checkmark::after {
+  content: '';
+  position: absolute;
+  display: none;
+  left: 5px;
+  top: 2px;
+  width: 6px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox input[type="checkbox"]:checked + .checkmark::after {
+  display: block;
+}
+
+.checkboxLabel {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  user-select: none;
+}
+
+.forgotPassword {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: color var(--transition-normal);
+  text-decoration: none;
+}
+
+.forgotPassword:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.submitButton {
+  width: 100%;
+  padding: 14px;
+  font-size: 1rem;
+  margin: var(--spacing-sm) 0;
+}
+
+.divider {
+  position: relative;
+  text-align: center;
+  margin: var(--spacing-lg) 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dividerText {
+  background: var(--color-background);
+  padding: 0 var(--spacing-md);
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  position: relative;
+  z-index: 1;
+}
+
+.switchMode {
+  text-align: center;
+  margin-top: var(--spacing-lg);
+}
+
+.switchText {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  margin-right: var(--spacing-xs);
+}
+
+.switchButton {
+  background: none;
+  border: none;
+  color: var(--color-primary);
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: color var(--transition-normal);
+  text-decoration: none;
+}
+
+.switchButton:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.termsContainer {
+  margin: var(--spacing-sm) 0;
+}
+
+.termsContainer .checkbox {
+  align-items: flex-start;
+}
+
+.termsContainer .checkboxLabel {
+  line-height: 1.4;
+  margin-top: -2px;
+}
+
+.link {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color var(--transition-normal);
+}
+
+.link:hover {
+  color: var(--color-accent);
+  text-decoration: underline;
+}
+
+.error {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--color-primary);
+  margin-top: var(--spacing-xs);
+}
+
+.errorMessage {
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  color: #ef4444;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+@media (max-width: 768px) {
+  .formOptions {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+  
+  .forgotPassword {
+    align-self: flex-end;
+  }
+}

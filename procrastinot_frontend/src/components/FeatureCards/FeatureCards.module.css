@@ -1,0 +1,260 @@
+.featuresSection {
+  padding: var(--spacing-3xl) 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-background) 0%,
+    rgba(26, 26, 26, 0.8) 50%,
+    var(--color-background) 100%
+  );
+  position: relative;
+  overflow: hidden;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: var(--spacing-3xl);
+}
+
+.title {
+  margin-bottom: var(--spacing-md);
+}
+
+.subtitle {
+  color: var(--color-text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.cardsContainer {
+  position: relative;
+  height: 600px;
+  perspective: 1000px;
+  margin-bottom: var(--spacing-xl);
+}
+
+.card {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 800px;
+  height: 400px;
+  transform-style: preserve-3d;
+  transition: all 0.8s cubic-bezier(0.4, 0.0, 0.2, 1);
+  cursor: pointer;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.card.active {
+  transform: translate(-50%, -50%) translateZ(0) rotateY(0deg);
+  opacity: 1;
+  z-index: 3;
+}
+
+.card.next {
+  transform: translate(-30%, -50%) translateZ(-200px) rotateY(-25deg);
+  opacity: 0.7;
+  z-index: 2;
+}
+
+.card.prev {
+  transform: translate(-70%, -50%) translateZ(-200px) rotateY(25deg);
+  opacity: 0.7;
+  z-index: 2;
+}
+
+.card.hidden {
+  transform: translate(-50%, -50%) translateZ(-400px) rotateY(0deg);
+  opacity: 0;
+  z-index: 1;
+}
+
+.cardContent {
+  display: flex;
+  height: 100%;
+  background: var(--color-glass);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--color-glass-border);
+}
+
+.imageSection {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+.featureImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--transition-slow);
+}
+
+.card:hover .featureImage {
+  transform: scale(1.05);
+}
+
+.imageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(220, 38, 38, 0.3) 0%,
+    rgba(15, 15, 15, 0.6) 100%
+  );
+}
+
+.textSection {
+  flex: 1;
+  padding: var(--spacing-xl);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.iconContainer {
+  margin-bottom: var(--spacing-md);
+}
+
+.icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.icon::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  background-color: var(--color-secondary);
+}
+
+.icon.timer::after {
+  border-radius: 50%;
+  border: 3px solid var(--color-primary);
+  background: transparent;
+}
+
+.icon.brain::after {
+  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+}
+
+.icon.mood::after {
+  border-radius: 50%;
+  position: relative;
+}
+
+.icon.mood::before {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--color-primary);
+  border-radius: 50%;
+  top: 8px;
+  left: 6px;
+  box-shadow: 12px 0 0 var(--color-primary);
+}
+
+.icon.skill::after {
+  clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  border-radius: 0;
+}
+
+.cardTitle {
+  margin-bottom: var(--spacing-sm);
+  color: var(--color-text-primary);
+}
+
+.cardDescription {
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.learnMore {
+  align-self: flex-start;
+  font-size: 0.9rem;
+  padding: var(--spacing-xs) var(--spacing-md);
+}
+
+.cardIndicators {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-sm);
+}
+
+.indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.3);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.indicatorActive {
+  background: var(--color-primary);
+  box-shadow: 0 0 10px rgba(220, 38, 38, 0.5);
+}
+
+@media (max-width: 1024px) {
+  .card {
+    width: 700px;
+    height: 350px;
+  }
+  
+  .textSection {
+    padding: var(--spacing-lg);
+  }
+}
+
+@media (max-width: 768px) {
+  .cardsContainer {
+    height: 500px;
+  }
+  
+  .card {
+    width: 90vw;
+    height: 300px;
+  }
+  
+  .card.next,
+  .card.prev {
+    transform: translate(-50%, -50%) translateZ(-100px) scale(0.8);
+    opacity: 0.5;
+  }
+  
+  .cardContent {
+    flex-direction: column;
+  }
+  
+  .imageSection {
+    height: 150px;
+  }
+  
+  .textSection {
+    padding: var(--spacing-md);
+  }
+  
+  .cardTitle {
+    font-size: 1.25rem;
+  }
+  
+  .cardDescription {
+    font-size: 0.9rem;
+    margin-bottom: var(--spacing-md);
+  }
+}

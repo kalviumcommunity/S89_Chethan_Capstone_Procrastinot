@@ -1,0 +1,304 @@
+.aboutSection {
+  padding: var(--spacing-3xl) 0;
+  background: linear-gradient(
+    180deg,
+    var(--color-background) 0%,
+    rgba(26, 26, 26, 0.5) 100%
+  );
+  position: relative;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-3xl);
+  align-items: center;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 1s ease;
+}
+
+.content.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.textContent {
+  max-width: 600px;
+}
+
+.title {
+  margin-bottom: var(--spacing-xl);
+  line-height: 1.2;
+}
+
+.philosophy {
+  margin-bottom: var(--spacing-xl);
+}
+
+.philosophyText {
+  margin-bottom: var(--spacing-md);
+  color: var(--color-text-primary);
+  font-style: italic;
+  line-height: 1.7;
+}
+
+.description {
+  color: var(--color-text-secondary);
+  line-height: 1.7;
+}
+
+.principles {
+  margin-top: var(--spacing-xl);
+}
+
+.principlesTitle {
+  margin-bottom: var(--spacing-lg);
+  color: var(--color-text-primary);
+}
+
+.principlesList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.principle {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  background: var(--color-glass);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--color-glass-border);
+  transition: all var(--transition-normal);
+}
+
+.principle:hover {
+  transform: translateX(10px);
+  background: rgba(220, 38, 38, 0.1);
+  border-color: var(--color-primary);
+}
+
+.principleIcon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-sm);
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+.iconFocus,
+.iconGrowth,
+.iconBalance {
+  width: 24px;
+  height: 24px;
+  position: relative;
+}
+
+.iconFocus::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 3px solid var(--color-secondary);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.iconFocus::before {
+  content: '';
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--color-secondary);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.iconGrowth::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 20px solid var(--color-secondary);
+  top: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.iconBalance::after {
+  content: '';
+  position: absolute;
+  width: 20px;
+  height: 2px;
+  background: var(--color-secondary);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.iconBalance::before {
+  content: '';
+  position: absolute;
+  width: 2px;
+  height: 12px;
+  background: var(--color-secondary);
+  top: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.principleContent {
+  flex: 1;
+}
+
+.principleTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xs);
+  color: var(--color-text-primary);
+}
+
+.principleDescription {
+  font-size: 0.9rem;
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+.visualElement {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.samuraiSymbol {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.outerRing {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 3px solid var(--color-primary);
+  border-radius: 50%;
+  animation: rotate 20s linear infinite;
+}
+
+.outerRing::before {
+  content: '';
+  position: absolute;
+  width: 80%;
+  height: 80%;
+  border: 2px solid rgba(220, 38, 38, 0.5);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: rotate 15s linear infinite reverse;
+}
+
+.innerSymbol {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.symbolLine {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  border-radius: 2px;
+  animation: glow 3s ease-in-out infinite alternate;
+}
+
+.symbolLine:nth-child(2) {
+  width: 80px;
+  animation-delay: 0.5s;
+}
+
+.symbolLine:nth-child(3) {
+  width: 40px;
+  animation-delay: 1s;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 1024px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+    text-align: center;
+  }
+  
+  .samuraiSymbol {
+    width: 250px;
+    height: 250px;
+  }
+}
+
+@media (max-width: 768px) {
+  .aboutSection {
+    padding: var(--spacing-2xl) 0;
+  }
+  
+  .principlesList {
+    gap: var(--spacing-md);
+  }
+  
+  .principle {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .samuraiSymbol {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .innerSymbol {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .symbolLine {
+    width: 40px;
+    height: 3px;
+  }
+  
+  .symbolLine:nth-child(2) {
+    width: 60px;
+  }
+  
+  .symbolLine:nth-child(3) {
+    width: 30px;
+  }
+}
