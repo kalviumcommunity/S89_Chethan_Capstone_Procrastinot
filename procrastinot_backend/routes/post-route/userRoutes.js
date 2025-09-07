@@ -36,7 +36,10 @@ router.get(
       if (!req.user) return res.status(401).json({ message: "Authentication failed" });
 
       const token = generateToken(req.user._id);
-      res.redirect(`${process.env.CLIENT_URL || 'http://localhost:5173'}/auth/callback?token=${token}`);
+      // Prefer configured CLIENT_URL, else fallback to request origin or localhost
+      const fallbackOrigin = req.headers.origin || (req.headers.referer ? new URL(req.headers.referer).origin : null) || 'http://localhost:5173';
+      const clientBase = process.env.CLIENT_URL || fallbackOrigin;
+      res.redirect(`${clientBase}/auth/callback?token=${token}`);
     } catch (err) {
       console.error('Google OAuth error:', err);
       res.status(500).json({ message: "Google OAuth failed" });

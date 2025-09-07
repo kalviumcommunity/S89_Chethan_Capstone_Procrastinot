@@ -13,12 +13,17 @@ requiredVars.forEach(varName => {
   }
 });
 
+// Determine the server base URL for OAuth callback
+const serverBaseUrl = process.env.SERVER_URL 
+  || process.env.RENDER_EXTERNAL_URL 
+  || 'https://s89-chethan-capstone-procrastinot-1.onrender.com';
+
 passport.use(
   new GoogleStrategy(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: `${process.env.SERVER_URL || 'http://localhost:8080'}/api/users/google/callback`,
+      callbackURL: `${serverBaseUrl}/api/users/google/callback`,
       userProfileURL: "https://www.googleapis.com/oauth2/v3/userinfo"
     },
     async (accessToken, refreshToken, profile, done) => {
@@ -39,14 +44,16 @@ passport.use(
           }
         } else {
           // Create new user
+          const rawName = profile.displayName || profile.emails?.[0]?.value?.split('@')?.[0] || 'user';
+          const sanitizedUsername = rawName
+            .toString()
+            .replace(/[^a-zA-Z0-9_-]/g, '')
+            .substring(0, 30) || `user${Date.now()}`;
+
           user = await User.create({
             googleId: profile.id,
-            username: profile.displayName,
+            username: sanitizedUsername,
             email: profile.emails[0].value,
-            // You might want to add these fields if they're available
-            // firstName: profile.name.givenName,
-            // lastName: profile.name.familyName,
-            // profilePicture: profile.photos[0]?.value
           });
         }
 
