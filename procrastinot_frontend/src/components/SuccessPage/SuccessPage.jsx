@@ -25,7 +25,7 @@ const SuccessPage = () => {
 
   const handleLogout = () => {
     authService.logout();
-    window.location.reload();
+    window.location.href = '/';
   };
 
   if (loading) {
