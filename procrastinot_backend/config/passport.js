@@ -43,16 +43,29 @@ passport.use(
             await user.save();
           }
         } else {
-          // Create new user
+          // Create new user with unique username
           const rawName = profile.displayName || profile.emails?.[0]?.value?.split('@')?.[0] || 'user';
-          const sanitizedUsername = rawName
+          const baseUsername = (rawName
             .toString()
             .replace(/[^a-zA-Z0-9_-]/g, '')
-            .substring(0, 30) || `user${Date.now()}`;
+            .substring(0, 30)) || `user${Date.now()}`;
+
+          let candidateUsername = baseUsername;
+          let suffix = 0;
+          // Ensure username uniqueness against existing users
+          // Try up to 10 variants quickly
+          // eslint-disable-next-line no-constant-condition
+          while (true) {
+            const clash = await User.findOne({ username: candidateUsername });
+            if (!clash) break;
+            suffix += 1;
+            const suffixStr = String(suffix);
+            candidateUsername = (baseUsername.substring(0, Math.max(1, 30 - suffixStr.length)) + suffixStr);
+          }
 
           user = await User.create({
             googleId: profile.id,
-            username: sanitizedUsername,
+            username: candidateUsername,
             email: profile.emails[0].value,
           });
         }
