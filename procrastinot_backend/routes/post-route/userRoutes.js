@@ -39,6 +39,7 @@ router.get(
       // Prefer configured CLIENT_URL, else fallback to request origin or localhost
       const fallbackOrigin = req.headers.origin || (req.headers.referer ? new URL(req.headers.referer).origin : null) || 'http://localhost:5173';
       const clientBase = process.env.CLIENT_URL || fallbackOrigin;
+      console.log('OAuth redirecting to client:', clientBase);
       res.redirect(`${clientBase}/auth/callback?token=${token}`);
     } catch (err) {
       console.error('Google OAuth error:', err);
@@ -125,7 +126,16 @@ router.post("/register", authLimiter, async (req, res) => {
     res.status(201).json({ userId: user._id, token });
   } catch (err) {
     console.error("Registration error:", err);
-    res.status(500).json({ message: "Registration failed" });
+    if (err && err.code === 11000) {
+      // Mongo duplicate key
+      const field = Object.keys(err.keyPattern || {})[0] || 'field';
+      return res.status(400).json({ message: `${field} already exists` });
+    }
+    if (err && err.name === 'ValidationError') {
+      const firstError = Object.values(err.errors)[0];
+      return res.status(400).json({ message: firstError.message });
+    }
+    res.status(500).json({ message: "Registration failed", error: err.message });
   }
 });
 
