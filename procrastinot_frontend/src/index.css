@@ -350,6 +350,77 @@ body {
   }
 }
 
+/* Dashboard theme extensions */
+:root {
+  /* Dashboard-specific glassmorphism effects */
+  --dashboard-glass: rgba(255, 255, 255, 0.1);
+  --dashboard-glass-border: rgba(255, 255, 255, 0.15);
+  --dashboard-glass-hover: rgba(255, 255, 255, 0.15);
+  
+  /* Dashboard card variations */
+  --card-glass-light: rgba(255, 255, 255, 0.08);
+  --card-glass-medium: rgba(255, 255, 255, 0.12);
+  --card-glass-strong: rgba(255, 255, 255, 0.16);
+  
+  /* Dashboard-specific shadows */
+  --dashboard-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --dashboard-shadow-hover: 0 12px 48px rgba(0, 0, 0, 0.4);
+  --dashboard-glow-red: 0 0 20px rgba(220, 38, 38, 0.4);
+  
+  /* Navigation specific colors */
+  --nav-active-bg: rgba(220, 38, 38, 0.2);
+  --nav-hover-bg: rgba(255, 255, 255, 0.1);
+  
+  /* Dashboard layout */
+  --dashboard-navbar-height: 80px;
+  --dashboard-content-padding: var(--spacing-xl);
+  
+  /* 3D transform effects */
+  --transform-hover-scale: 1.02;
+  --transform-active-scale: 0.98;
+  --transform-perspective: 1000px;
+}
+
+/* Dashboard-specific glass effects */
+.dashboard-glass {
+  background: var(--dashboard-glass);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid var(--dashboard-glass-border);
+  box-shadow: var(--dashboard-shadow);
+}
+
+.dashboard-glass:hover {
+  background: var(--dashboard-glass-hover);
+  box-shadow: var(--dashboard-shadow-hover);
+}
+
+/* 3D card effects */
+.card-3d {
+  transform-style: preserve-3d;
+  transition: all var(--transition-normal);
+  perspective: var(--transform-perspective);
+}
+
+.card-3d:hover {
+  transform: translateY(-4px) rotateX(2deg) rotateY(2deg) scale(var(--transform-hover-scale));
+}
+
+.card-3d:active {
+  transform: scale(var(--transform-active-scale));
+}
+
+/* Navigation item styles */
+.nav-item-active {
+  background: var(--nav-active-bg);
+  color: var(--color-primary);
+  box-shadow: var(--dashboard-glow-red);
+}
+
+.nav-item-hover {
+  background: var(--nav-hover-bg);
+}
+
 /* Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 8px;

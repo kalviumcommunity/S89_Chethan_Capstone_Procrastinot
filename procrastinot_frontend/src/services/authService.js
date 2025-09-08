@@ -129,9 +129,56 @@ class AuthService {
         throw new Error(data.message || 'Failed to fetch profile');
       }
 
-      return data;
+      // Return the user object from the response
+      return data.user || data;
     } catch (error) {
       throw new Error(error.message || 'Failed to fetch profile');
+    }
+  }
+
+  // Get dashboard stats
+  async getDashboardStats() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/users/dashboard-stats`, {
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        // Return mock data if endpoint doesn't exist yet
+        return {
+          focusTime: 0,
+          activeSessions: 0,
+          skillProgress: 0,
+          completedTasks: 0
+        };
+      }
+
+      return await response.json();
+    } catch (error) {
+      // Return mock data on error
+      return {
+        focusTime: 0,
+        activeSessions: 0,
+        skillProgress: 0,
+        completedTasks: 0
+      };
+    }
+  }
+
+  // Get user tasks
+  async getTasks() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/tasks`, {
+        headers: this.getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        return [];
+      }
+
+      return await response.json();
+    } catch (error) {
+      return [];
     }
   }
 }

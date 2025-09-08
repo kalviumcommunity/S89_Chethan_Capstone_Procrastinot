@@ -82,7 +82,10 @@ const SuccessPage = () => {
         </div>
 
         <div className={styles.actions}>
-          <button className={`btn btn-primary ${styles.continueBtn}`}>
+          <button 
+            className={`btn btn-primary ${styles.continueBtn}`}
+            onClick={() => window.location.href = '/dashboard'}
+          >
             Continue to Dashboard
           </button>
           <button 

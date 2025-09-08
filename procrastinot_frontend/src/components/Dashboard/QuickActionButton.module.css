@@ -1,0 +1,118 @@
+.quickActionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: var(--font-primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+  text-decoration: none;
+}
+
+.quickActionButton::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s;
+}
+
+.quickActionButton:hover::before {
+  left: 100%;
+}
+
+.quickActionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--dashboard-shadow-hover);
+}
+
+.quickActionButton:active {
+  transform: translateY(0);
+}
+
+.buttonLabel {
+  font-size: inherit;
+  white-space: nowrap;
+}
+
+.buttonGlow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle, rgba(220, 38, 38, 0.2) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+
+.quickActionButton:hover .buttonGlow {
+  opacity: 1;
+}
+
+/* Size variants */
+.quickActionButton.small {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.875rem;
+}
+
+.quickActionButton.medium {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  font-size: 0.9rem;
+}
+
+.quickActionButton.large {
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: 1rem;
+}
+
+/* Style variants */
+.quickActionButton.primary {
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  color: var(--color-secondary);
+  box-shadow: var(--dashboard-glow-red);
+}
+
+.quickActionButton.secondary {
+  background: var(--dashboard-glass);
+  color: var(--color-text-primary);
+  border: 1px solid var(--dashboard-glass-border);
+}
+
+.quickActionButton.secondary:hover {
+  background: var(--dashboard-glass-hover);
+  border-color: var(--color-primary);
+}
+
+.quickActionButton.ghost {
+  background: transparent;
+  color: var(--color-text-primary);
+  border: 2px solid var(--dashboard-glass-border);
+}
+
+.quickActionButton.ghost:hover {
+  background: var(--dashboard-glass);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+@media (max-width: 768px) {
+  .quickActionButton.large {
+    padding: var(--spacing-sm) var(--spacing-lg);
+    font-size: 0.9rem;
+  }
+  
+  .quickActionButton.medium {
+    padding: var(--spacing-xs) var(--spacing-md);
+    font-size: 0.85rem;
+  }
+}

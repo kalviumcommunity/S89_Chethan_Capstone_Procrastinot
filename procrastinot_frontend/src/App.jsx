@@ -7,7 +7,7 @@ import AnimationElement from './components/AnimationElement/AnimationElement';
 import AboutSection from './components/AboutSection/AboutSection';
 import Footer from './components/Footer/Footer';
 import AuthModal from './components/AuthModal/AuthModal';
-import SuccessPage from './components/SuccessPage/SuccessPage';
+import Dashboard from './components/Dashboard/Dashboard';
 import AuthCallback from './components/AuthCallback/AuthCallback';
 import authService from './services/authService';
 import './index.css';
@@ -19,18 +19,19 @@ function App() {
   useEffect(() => {
     // Simple routing based on URL path
     const path = window.location.pathname;
-    if (path === '/success') {
-      setCurrentPage('success');
+    
+    if (path === '/dashboard') {
+      setCurrentPage('dashboard');
     } else if (path === '/auth/callback') {
       setCurrentPage('callback');
     } else {
       setCurrentPage('home');
     }
 
-    // Check if user is already authenticated
+    // Check if user is already authenticated and redirect only if they're on home page
     if (authService.isAuthenticated() && path === '/') {
-      setCurrentPage('success');
-      window.history.pushState({}, '', '/success');
+      setCurrentPage('dashboard');
+      window.history.pushState({}, '', '/dashboard');
     }
 
     const handleOpenAuthModal = (event) => {
@@ -49,8 +50,8 @@ function App() {
   };
 
   // Render different pages based on current route
-  if (currentPage === 'success') {
-    return <SuccessPage />;
+  if (currentPage === 'dashboard') {
+    return <Dashboard />;
   }
 
   if (currentPage === 'callback') {

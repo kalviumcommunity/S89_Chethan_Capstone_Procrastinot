@@ -80,8 +80,8 @@ const SignupForm = ({ onModeChange, onClose }) => {
     try {
       await authService.register(formData);
       onClose();
-      // Redirect to success page
-      window.location.href = '/success';
+      // Redirect to dashboard
+      window.location.href = '/dashboard';
     } catch (error) {
       setErrors({ submit: error.message });
     } finally {

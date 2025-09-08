@@ -12,7 +12,7 @@ const AuthCallback = () => {
         try {
           const payload = JSON.parse(atob(token.split('.')[1]));
           authService.setAuth(token, payload.id);
-          window.location.href = '/success';
+          window.location.href = '/dashboard';
         } catch (error) {
           console.error('Invalid token:', error);
           window.location.href = '/';
