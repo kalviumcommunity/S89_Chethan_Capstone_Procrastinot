@@ -36,9 +36,16 @@ router.get(
       if (!req.user) return res.status(401).json({ message: "Authentication failed" });
 
       const token = generateToken(req.user._id);
-      // Prefer configured CLIENT_URL, else fallback to request origin or localhost
-      const fallbackOrigin = req.headers.origin || (req.headers.referer ? new URL(req.headers.referer).origin : null) || 'http://localhost:5173';
-      const clientBase = process.env.CLIENT_URL || fallbackOrigin;
+      // Get the origin from the request headers
+      const origin = req.headers.origin || req.headers.referer;
+      let clientBase = 'http://localhost:5173'; // default fallback
+      
+      if (origin) {
+        if (origin.includes('devtunnels.ms') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
+          clientBase = origin.replace(/\/$/, ''); // remove trailing slash
+        }
+      }
+      
       console.log('OAuth redirecting to client:', clientBase);
       res.redirect(`${clientBase}/auth/callback?token=${token}`);
     } catch (err) {
