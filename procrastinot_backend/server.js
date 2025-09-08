@@ -10,7 +10,7 @@ require("./config/passport");
 // Load environment variables
 dotenv.config();
 
-// 🔹 Ensure required environment variables exist (CLIENT_URL optional; CORS handles multiple origins)
+// 🔹 Ensure required environment variables exist
 const requiredEnvVars = [
   "MONGO_URI", 
   "JWT_SECRET", 
@@ -31,27 +31,10 @@ const app = express();
 
 // 🔹 Middleware
 app.use(generalLimiter); // Apply rate limiting to all requests
-// CORS: allow deployed frontend, localhost, and common preview domains
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'http://localhost:5173',
-  'https://localhost:5173',
-  'https://*.vercel.app'
-].filter(Boolean);
-
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow REST tools/no origin and any explicitly allowed origin
-    if (!origin || allowedOrigins.some(o => {
-      if (o.includes('*')) {
-        const regex = new RegExp('^' + o.replace('.', '\\.').replace('*', '.*') + '$');
-        return regex.test(origin);
-      }
-      return o === origin;
-    })) {
-      return callback(null, true);
-    }
-    return callback(new Error('Not allowed by CORS'));
+    // Allow all origins for development
+    return callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
