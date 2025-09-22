@@ -18,11 +18,11 @@ const UserProfile = ({ user, onLogout }) => {
     <div className={styles.userProfile}>
       <div className={styles.profileInfo}>
         <img 
-          src={user.avatar || user.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || user.name || user.email?.split('@')[0] || 'User')}&background=667eea&color=fff&size=40`} 
+          src={user.avatar || user.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || user.name || user.email?.split('@')[0] || 'User')}&background=0F0F0F&color=fff&size=40`} 
           alt={user.username || user.name || 'User'}
           className={styles.avatar}
           onError={(e) => {
-            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || user.name || user.email?.split('@')[0] || 'User')}&background=667eea&color=fff&size=40`;
+            e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user.username || user.name || user.email?.split('@')[0] || 'User')}&background=0F0F0F&color=fff&size=40`;
           }}
         />
         <div className={styles.userDetails}>

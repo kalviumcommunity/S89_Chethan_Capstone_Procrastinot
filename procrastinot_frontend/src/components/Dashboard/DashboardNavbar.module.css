@@ -3,25 +3,29 @@
   top: 0;
   left: 0;
   right: 0;
-  height: var(--dashboard-navbar-height);
+  height: 60px;
   z-index: 100;
-  border-bottom: 1px solid var(--dashboard-glass-border);
+  background: rgba(15, 15, 15, 0.3);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .navbarContent {
   height: 100%;
   max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-lg);
+  padding: 0 var(--spacing-md);
   display: grid;
-  grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: 2fr 3fr 1fr;
   align-items: center;
-  gap: var(--spacing-lg);
+  gap: var(--spacing-md);
 }
 
 .leftSection {
   display: flex;
   justify-content: flex-start;
+  padding-left: var(--spacing-sm);
 }
 
 .centerSection {

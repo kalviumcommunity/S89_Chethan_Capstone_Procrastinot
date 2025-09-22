@@ -372,7 +372,7 @@ body {
   --nav-hover-bg: rgba(255, 255, 255, 0.1);
   
   /* Dashboard layout */
-  --dashboard-navbar-height: 80px;
+  --dashboard-navbar-height: 60px;
   --dashboard-content-padding: var(--spacing-xl);
   
   /* 3D transform effects */
