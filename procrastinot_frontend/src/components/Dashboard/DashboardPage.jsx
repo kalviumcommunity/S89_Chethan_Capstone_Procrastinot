@@ -40,6 +40,21 @@ const DashboardPage = ({
       />
       
       <section className={styles.heroSection}>
+        <div className={styles.videoContainer}>
+          <video
+            className={styles.backgroundVideo}
+            autoPlay
+            muted
+            loop
+            playsInline
+            onError={() => console.error('Video failed to load')}
+            onLoadStart={() => console.log('Video loading started')}
+          >
+            <source src="/images/hero-video.mp4" type="video/mp4" />
+          </video>
+          <div className={styles.overlay}></div>
+        </div>
+        
         <div className={`${styles.content} ${isLoaded ? styles.loaded : ''}`}>
           <div className="container">
             <div className={styles.heroText}>
