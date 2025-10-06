@@ -82,6 +82,10 @@ const taskSchema = new mongoose.Schema({
   attachmentUrl: {
     type: String,
   },
+  importantLinks: [{
+    type: String,
+    trim: true,
+  }],
   relatedSkills: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Skill'
