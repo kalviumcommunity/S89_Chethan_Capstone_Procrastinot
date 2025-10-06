@@ -14,6 +14,18 @@ const navigationItems = [
 ];
 
 const NavigationMenu = ({ activeItem, onNavigate }) => {
+  const handleClick = (id) => {
+    if (id === 'smart_plan') {
+      window.location.href = '/smart-plan';
+      return;
+    }
+    if (id === 'home') {
+      window.location.href = '/dashboard';
+      return;
+    }
+    if (onNavigate) onNavigate(id);
+  };
+
   return (
     <nav className={styles.navigationMenu}>
       {navigationItems.map((item) => {
@@ -24,7 +36,7 @@ const NavigationMenu = ({ activeItem, onNavigate }) => {
           <button
             key={item.id}
             className={`${styles.navItem} ${isActive ? styles.active : ''}`}
-            onClick={() => onNavigate(item.id)}
+            onClick={() => handleClick(item.id)}
           >
             <IconComponent 
               width={20} 

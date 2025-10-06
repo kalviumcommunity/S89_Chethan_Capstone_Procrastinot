@@ -11,6 +11,7 @@ import Dashboard from './components/Dashboard/Dashboard';
 import AuthCallback from './components/AuthCallback/AuthCallback';
 import authService from './services/authService';
 import './index.css';
+import SmartPlan from './components/SmartPlan/SmartPlan';
 
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -22,6 +23,8 @@ function App() {
     
     if (path === '/dashboard') {
       setCurrentPage('dashboard');
+    } else if (path === '/smart-plan') {
+      setCurrentPage('smart_plan');
     } else if (path === '/auth/callback') {
       setCurrentPage('callback');
     } else {
@@ -52,6 +55,10 @@ function App() {
   // Render different pages based on current route
   if (currentPage === 'dashboard') {
     return <Dashboard />;
+  }
+
+  if (currentPage === 'smart_plan') {
+    return <SmartPlan />;
   }
 
   if (currentPage === 'callback') {

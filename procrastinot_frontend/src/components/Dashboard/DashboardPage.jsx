@@ -77,7 +77,7 @@ const DashboardPage = ({
       <section className={styles.dashboardFeatures}>
         <div className="container">
           <div className={styles.featuresGrid}>
-            <div className={styles.featureCard}>
+            <div className={styles.featureCard} onClick={() => { window.location.href = '/smart-plan'; }}>
               <div className={styles.featureIcon}>
                 <PlanIcon width={32} height={32} color="#DC2626" />
               </div>

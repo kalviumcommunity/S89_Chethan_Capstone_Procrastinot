@@ -114,7 +114,18 @@ const FeatureCards = () => {
                   <p className={`text-base ${styles.cardDescription}`}>
                     {feature.description}
                   </p>
-                  <button className={`btn btn-ghost ${styles.learnMore}`}>
+                  <button
+                    className={`btn btn-ghost ${styles.learnMore}`}
+                    onClick={() => {
+                      // If authenticated, go to smart plan; else open auth
+                      const isAuthed = !!localStorage.getItem('token');
+                      if (isAuthed) {
+                        window.location.href = '/smart-plan';
+                      } else {
+                        window.dispatchEvent(new CustomEvent('openAuthModal'));
+                      }
+                    }}
+                  >
                     Learn More
                   </button>
                 </div>
