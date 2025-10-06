@@ -30,11 +30,17 @@ const TaskForm = ({ onAdd }) => {
   const [description, setDescription] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [isImportant, setIsImportant] = useState(false);
+  const [importantLinks, setImportantLinks] = useState(['']);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    const payload = { title: title.trim(), description, isImportant };
+    const payload = { 
+      title: title.trim(), 
+      description, 
+      isImportant,
+      importantLinks: importantLinks.filter(link => link.trim())
+    };
     if (dueDate) payload.dueDate = new Date(dueDate).toISOString();
     const created = await onAdd(payload);
     if (created) {
@@ -42,7 +48,22 @@ const TaskForm = ({ onAdd }) => {
       setDescription('');
       setDueDate('');
       setIsImportant(false);
+      setImportantLinks(['']);
     }
+  };
+
+  const addLinkField = () => {
+    setImportantLinks([...importantLinks, '']);
+  };
+
+  const removeLinkField = (index) => {
+    setImportantLinks(importantLinks.filter((_, i) => i !== index));
+  };
+
+  const updateLink = (index, value) => {
+    const updated = [...importantLinks];
+    updated[index] = value;
+    setImportantLinks(updated);
   };
 
   return (
@@ -59,6 +80,35 @@ const TaskForm = ({ onAdd }) => {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
       />
+      <div className={styles.linksSection}>
+        <label className={styles.label}>Important Links</label>
+        {importantLinks.map((link, index) => (
+          <div key={index} className={styles.linkRow}>
+            <input
+              className={styles.input}
+              placeholder="https://example.com"
+              value={link}
+              onChange={(e) => updateLink(index, e.target.value)}
+            />
+            {importantLinks.length > 1 && (
+              <button
+                type="button"
+                className={styles.removeBtn}
+                onClick={() => removeLinkField(index)}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+        ))}
+        <button
+          type="button"
+          className={`btn btn-ghost ${styles.addLinkBtn}`}
+          onClick={addLinkField}
+        >
+          + Add Link
+        </button>
+      </div>
       <div className={styles.row}>
         <label className={styles.label}>Due</label>
         <input
@@ -95,6 +145,21 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete }) => {
           <div className={`${styles.taskTitle} ${completed ? styles.completed : ''}`}>{task.title}</div>
           {task.dueDate && (
             <div className={styles.taskMeta}>Due {new Date(task.dueDate).toLocaleDateString()}</div>
+          )}
+          {task.importantLinks && task.importantLinks.length > 0 && (
+            <div className={styles.taskLinks}>
+              {task.importantLinks.map((link, index) => (
+                <a
+                  key={index}
+                  href={link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={styles.taskLink}
+                >
+                  🔗 Link {index + 1}
+                </a>
+              ))}
+            </div>
           )}
         </div>
       </div>
@@ -152,15 +217,8 @@ const CalendarGrid = ({ tasks, currentMonth, onSelectDate }) => {
           >
             {day && (
               <div className={styles.calendarDay}>
-                <div className={styles.calendarDate}>{day.getDate()}</div>
-                <div className={styles.calendarTasks}>
-                  {dayTasks.slice(0, 3).map((t) => (
-                    <div key={t._id} className={styles.calendarTask}>
-                      <span className={styles.bullet}>•</span> {t.title}
-                    </div>
-                  ))}
-                </div>
-              </div>
+                <div className={styles.calendarDate}><span>{day.getDate()}</span>{dayTasks.length > 0 && (<span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--color-primary)', display: 'inline-block', marginLeft: 6 }} />)}</div>
+                              </div>
             )}
           </div>
         );
@@ -269,8 +327,7 @@ const SmartPlan = () => {
         }
       }} onLogout={() => { authService.logout(); window.location.href = '/'; }} />
 
-      <div className={styles.header}>Smart Plan</div>
-      <SubNav active={activeTab} onChange={setActiveTab} />
+            <SubNav active={activeTab} onChange={setActiveTab} />
 
       <div style={{
         display: 'grid',
@@ -300,7 +357,7 @@ const SmartPlan = () => {
           </div>
         </div>
 
-        <aside className={styles.calendarSection} style={{ position: 'sticky', top: 'calc(var(--dashboard-navbar-height) + var(--spacing-lg))' }}>
+        <aside className={styles.calendarSection} style={{ position: 'sticky', top: '20px' }}>
           <div className={styles.calendarControls}>
             <button className="btn btn-ghost" onClick={() => setMonth(new Date(month.getFullYear(), month.getMonth() - 1, 1))}>Prev</button>
             <div className={styles.monthTitle}>

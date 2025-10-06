@@ -42,6 +42,7 @@ const taskService = {
         pomodoroCount: task.pomodoroCount || 0,
         aiBreakdown: task.aiBreakdown || [],
         attachmentUrl: task.attachmentUrl || undefined,
+        importantLinks: task.importantLinks || [],
       };
 
       const res = await fetch(`${API_BASE_URL}/tasks`, {
