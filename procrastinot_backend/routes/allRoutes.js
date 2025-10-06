@@ -28,6 +28,7 @@ router.use("/skill-progress", require("./get-routes/skillProgressRoutes"));
 router.use("/moods", require("./get-routes/moodRoutes"));
 router.use("/challenges", require("./get-routes/challengeRoutes"));
 router.use("/pomodoro", require("./get-routes/pomodoroRoutes"));
+router.use("/utils", require("./get-routes/utilsRoutes"));
 
 // ✅ Authenticated POST Routes
 router.use("/tasks", require("./post-route/taskRoutes"));
