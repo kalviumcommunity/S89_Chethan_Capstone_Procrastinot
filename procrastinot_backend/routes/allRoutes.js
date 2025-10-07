@@ -28,6 +28,7 @@ router.use("/skill-progress", require("./get-routes/skillProgressRoutes"));
 router.use("/moods", require("./get-routes/moodRoutes"));
 router.use("/challenges", require("./get-routes/challengeRoutes"));
 router.use("/pomodoro", require("./get-routes/pomodoroRoutes"));
+router.use("/chatbot", require("./get-routes/chatbotRoutes"));
 router.use("/utils", require("./get-routes/utilsRoutes"));
 
 // ✅ Authenticated POST Routes
@@ -37,6 +38,7 @@ router.use("/skill-progress", require("./post-route/skillProgressRoutes"));
 router.use("/moods", require("./post-route/moodRoutes"));
 router.use("/challenges", require("./post-route/challengeRoutes"));
 router.use("/pomodoro", require("./post-route/pomodoroRoutes"));
+router.use("/chatbot", require("./post-route/chatbotRoutes"));
 
 // ✅ Authenticated PUT Routes
 router.use("/users", require("./put-routes/userRoutes"));
@@ -55,5 +57,6 @@ router.use("/skill-progress", require("./delete-routes/skillProgressRoutes"));
 router.use("/moods", require("./delete-routes/moodRoutes"));
 router.use("/challenges", require("./delete-routes/challengeRoutes"));
 router.use("/pomodoro", require("./delete-routes/pomodoroRoutes"));
+router.use("/chatbot", require("./delete-routes/chatbotRoutes"));
 
 module.exports = router;
