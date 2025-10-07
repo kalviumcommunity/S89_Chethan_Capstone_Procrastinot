@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import DashboardNavbar from '../Dashboard/DashboardNavbar';
+import ChatBot from '../ChatBot/ChatBot';
 import styles from './SmartPlan.module.css';
 import taskService from '../../services/taskService';
 import authService from '../../services/authService';
@@ -400,6 +401,8 @@ const SmartPlan = () => {
           </div>
         </div>
       )}
+      
+      <ChatBot />
     </div>
   );
 };

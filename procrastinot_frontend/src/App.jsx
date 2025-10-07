@@ -13,6 +13,7 @@ import authService from './services/authService';
 import './index.css';
 import SmartPlan from './components/SmartPlan/SmartPlan';
 import Pomodoro from './components/Pomodoro/Pomodoro';
+import ChatBot from './components/ChatBot/ChatBot';
 
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -87,6 +88,8 @@ function App() {
         onClose={handleCloseModal}
         initialMode="signup"
       />
+      
+      <ChatBot />
     </div>
   );
 }

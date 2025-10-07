@@ -9,6 +9,7 @@ import PlanIcon from '../icons/PlanIcon';
 import TimerIcon from '../icons/TimerIcon';
 import SkillsIcon from '../icons/SkillsIcon';
 import ChallengeIcon from '../icons/ChallengeIcon';
+import ChatBot from '../ChatBot/ChatBot';
 import styles from './DashboardPage.module.css';
 
 const DashboardPage = ({ 
@@ -113,6 +114,8 @@ const DashboardPage = ({
       <AnimationElement />
       <AboutSection />
       <Footer />
+      
+      <ChatBot />
     </div>
   );
 };

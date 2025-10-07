@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import DashboardNavbar from '../Dashboard/DashboardNavbar';
+import ChatBot from '../ChatBot/ChatBot';
 import styles from './Pomodoro.module.css';
 import taskService from '../../services/taskService';
 import pomodoroService from '../../services/pomodoroService';
@@ -525,6 +526,8 @@ const Pomodoro = () => {
           />
         </div>
       </div>
+      
+      <ChatBot />
     </div>
   );
 };
