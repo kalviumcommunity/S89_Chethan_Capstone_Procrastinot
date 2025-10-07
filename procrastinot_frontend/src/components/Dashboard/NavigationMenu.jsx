@@ -19,6 +19,10 @@ const NavigationMenu = ({ activeItem, onNavigate }) => {
       window.location.href = '/smart-plan';
       return;
     }
+    if (id === 'pomodoro') {
+      window.location.href = '/pomodoro';
+      return;
+    }
     if (id === 'home') {
       window.location.href = '/dashboard';
       return;

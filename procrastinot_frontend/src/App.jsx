@@ -12,6 +12,7 @@ import AuthCallback from './components/AuthCallback/AuthCallback';
 import authService from './services/authService';
 import './index.css';
 import SmartPlan from './components/SmartPlan/SmartPlan';
+import Pomodoro from './components/Pomodoro/Pomodoro';
 
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
@@ -25,6 +26,8 @@ function App() {
       setCurrentPage('dashboard');
     } else if (path === '/smart-plan') {
       setCurrentPage('smart_plan');
+    } else if (path === '/pomodoro') {
+      setCurrentPage('pomodoro');
     } else if (path === '/auth/callback') {
       setCurrentPage('callback');
     } else {
@@ -59,6 +62,10 @@ function App() {
 
   if (currentPage === 'smart_plan') {
     return <SmartPlan />;
+  }
+
+  if (currentPage === 'pomodoro') {
+    return <Pomodoro />;
   }
 
   if (currentPage === 'callback') {
