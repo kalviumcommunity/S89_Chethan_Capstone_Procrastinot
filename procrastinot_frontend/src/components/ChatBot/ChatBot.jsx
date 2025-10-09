@@ -1,9 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import styles from './ChatBot.module.css';
 import geminiService from '../../services/geminiService';
-import authService from '../../services/authService';
-import taskService from '../../services/taskService';
-import pomodoroService from '../../services/pomodoroService';
+import chatbotService from '../../services/chatbotService';
 
 const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,42 +9,61 @@ const ChatBot = () => {
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [suggestedPrompts, setSuggestedPrompts] = useState([]);
-  const [userContext, setUserContext] = useState({});
+  const [isPageLoaded, setIsPageLoaded] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Initialize chatbot with welcome message and context
-  useEffect(() => {
-    const initializeChatbot = async () => {
-      try {
-        // Get user context
-        const context = await getUserContext();
-        setUserContext(context);
-        
-        // Get suggested prompts
-        const prompts = geminiService.getSuggestedPrompts(context);
-        setSuggestedPrompts(prompts);
+  // Format message content for better readability
+  const formatMessage = (content) => {
+    return content
+      .split('\n')
+      .map((line, index) => (
+        <div key={index} className={styles.messageLine}>
+          {line}
+        </div>
+      ));
+  };
 
-        // Add welcome message
-        const welcomeMessage = {
-          id: Date.now(),
-          type: 'bot',
-          content: "Hi! I'm ProcrastiBot, your AI study and productivity assistant! 🤖✨ I'm here to help you beat procrastination, improve your study habits, and stay productive. What would you like to work on today?",
-          timestamp: new Date()
-        };
-        
-        setMessages([welcomeMessage]);
-      } catch (error) {
-        console.error('Error initializing chatbot:', error);
-      }
+  // Wait for page to fully load before showing chatbot
+  useEffect(() => {
+    const handlePageLoad = () => {
+      setTimeout(() => setIsPageLoaded(true), 1000); // 1 second delay after page load
+    };
+
+    if (document.readyState === 'complete') {
+      handlePageLoad();
+    } else {
+      window.addEventListener('load', handlePageLoad);
+      return () => window.removeEventListener('load', handlePageLoad);
+    }
+  }, []);
+
+  // Initialize chatbot when page is loaded
+  useEffect(() => {
+    if (!isPageLoaded) return;
+
+    const initializeChatbot = () => {
+      // Get contextual suggestions
+      const prompts = chatbotService.getContextualSuggestions();
+      setSuggestedPrompts(prompts);
+
+      // Set welcome message
+      const welcomeMessage = {
+        id: Date.now(),
+        type: 'bot',
+        content: chatbotService.getPersonalizedWelcome(),
+        timestamp: new Date()
+      };
+      
+      setMessages([welcomeMessage]);
     };
 
     initializeChatbot();
-  }, []);
+  }, [isPageLoaded]);
 
   // Auto-scroll to bottom when new messages are added
   useEffect(() => {
-    scrollToBottom();
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   // Focus input when chat opens
@@ -55,42 +72,6 @@ const ChatBot = () => {
       inputRef.current.focus();
     }
   }, [isOpen]);
-
-  const getUserContext = async () => {
-    const context = {
-      currentPage: getCurrentPage(),
-      userTasks: [],
-      pomodoroSessions: []
-    };
-
-    try {
-      if (authService.isAuthenticated()) {
-        // Get user tasks
-        const tasks = await taskService.getUserTasks();
-        context.userTasks = tasks;
-
-        // Get pomodoro sessions
-        const sessions = await pomodoroService.getUserSessions();
-        context.pomodoroSessions = sessions;
-      }
-    } catch (error) {
-      console.error('Error getting user context:', error);
-    }
-
-    return context;
-  };
-
-  const getCurrentPage = () => {
-    const path = window.location.pathname;
-    if (path === '/dashboard') return 'dashboard';
-    if (path === '/smart-plan') return 'smart_plan';
-    if (path === '/pomodoro') return 'pomodoro';
-    return 'home';
-  };
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
 
   const handleSendMessage = async (message = inputMessage) => {
     if (!message.trim() || isLoading) return;
@@ -107,7 +88,7 @@ const ChatBot = () => {
     setIsLoading(true);
 
     try {
-      const response = await geminiService.sendMessage(message, userContext);
+      const response = await geminiService.sendMessage(message);
       
       const botMessage = {
         id: Date.now() + 1,
@@ -124,7 +105,7 @@ const ChatBot = () => {
       const errorMessage = {
         id: Date.now() + 1,
         type: 'bot',
-        content: "Sorry, I'm having trouble connecting right now. Please try again in a moment! 🔄",
+        content: "I'm temporarily unavailable, but I'll be back shortly to help with your questions!",
         timestamp: new Date(),
         success: false
       };
@@ -158,12 +139,17 @@ const ChatBot = () => {
     const welcomeMessage = {
       id: Date.now(),
       type: 'bot',
-      content: "Chat cleared! How can I help you with your productivity and study goals today? 🚀",
+      content: chatbotService.getPersonalizedWelcome(),
       timestamp: new Date()
     };
     
     setMessages([welcomeMessage]);
   };
+
+  // Don't render until page is loaded
+  if (!isPageLoaded) {
+    return null;
+  }
 
   return (
     <>
@@ -171,7 +157,7 @@ const ChatBot = () => {
       <button 
         className={`${styles.chatButton} ${isOpen ? styles.chatButtonOpen : ''}`}
         onClick={toggleChat}
-        title="Open ProcrastiBot"
+        title="Open StudyMate AI"
       >
         <div className={styles.chatButtonIcon}>
           {isOpen ? '✕' : '🤖'}
@@ -188,8 +174,8 @@ const ChatBot = () => {
             <div className={styles.chatHeaderInfo}>
               <div className={styles.chatHeaderIcon}>🤖</div>
               <div>
-                <h3 className={styles.chatHeaderTitle}>ProcrastiBot</h3>
-                <p className={styles.chatHeaderSubtitle}>Your AI Study Assistant</p>
+                <h3 className={styles.chatHeaderTitle}>StudyMate AI</h3>
+                <p className={styles.chatHeaderSubtitle}>Your Intelligent Study Companion</p>
               </div>
             </div>
             <div className={styles.chatHeaderActions}>
@@ -198,7 +184,7 @@ const ChatBot = () => {
                 onClick={clearChat}
                 title="Clear Chat"
               >
-                🗑️
+                ⟳
               </button>
               <button 
                 className={styles.chatHeaderBtn}
@@ -217,7 +203,7 @@ const ChatBot = () => {
                 className={`${styles.message} ${styles[message.type]}`}
               >
                 <div className={styles.messageContent}>
-                  {message.content}
+                  {formatMessage(message.content)}
                 </div>
                 <div className={styles.messageTime}>
                   {message.timestamp.toLocaleTimeString([], { 
@@ -246,7 +232,7 @@ const ChatBot = () => {
           {/* Suggested Prompts */}
           {messages.length === 1 && suggestedPrompts.length > 0 && (
             <div className={styles.suggestedPrompts}>
-              <p className={styles.suggestedPromptsTitle}>Try asking:</p>
+              <p className={styles.suggestedPromptsTitle}>💡 Try asking:</p>
               <div className={styles.suggestedPromptsList}>
                 {suggestedPrompts.map((prompt, index) => (
                   <button
@@ -266,7 +252,7 @@ const ChatBot = () => {
               <textarea
                 ref={inputRef}
                 className={styles.chatInputField}
-                placeholder="Ask me about productivity, studying, or beating procrastination..."
+                placeholder="Ask me anything - productivity tips, study strategies, or general questions..."
                 value={inputMessage}
                 onChange={(e) => setInputMessage(e.target.value)}
                 onKeyPress={handleKeyPress}

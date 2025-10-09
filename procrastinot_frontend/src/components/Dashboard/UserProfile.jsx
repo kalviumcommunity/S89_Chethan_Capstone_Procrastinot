@@ -14,6 +14,10 @@ const UserProfile = ({ user, onLogout }) => {
     onLogout();
   };
 
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className={styles.userProfile}>
       <div className={styles.profileInfo}>

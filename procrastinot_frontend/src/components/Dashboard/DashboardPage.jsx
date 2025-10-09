@@ -85,7 +85,7 @@ const DashboardPage = ({
               <h3 className={styles.featureTitle}>Smart Plan</h3>
             </div>
             
-            <div className={styles.featureCard}>
+            <div className={styles.featureCard} onClick={() => { window.location.href = '/pomodoro'; }}>
               <div className={styles.featureIcon}>
                 <TimerIcon width={32} height={32} color="#DC2626" />
               </div>

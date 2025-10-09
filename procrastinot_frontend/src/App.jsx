@@ -18,6 +18,7 @@ import ChatBot from './components/ChatBot/ChatBot';
 function App() {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState('home');
+  const [isAppLoaded, setIsAppLoaded] = useState(false);
 
   useEffect(() => {
     // Simple routing based on URL path
@@ -47,6 +48,9 @@ function App() {
 
     window.addEventListener('openAuthModal', handleOpenAuthModal);
 
+    // Mark app as loaded after initial setup
+    setTimeout(() => setIsAppLoaded(true), 500);
+
     return () => {
       window.removeEventListener('openAuthModal', handleOpenAuthModal);
     };
@@ -58,15 +62,30 @@ function App() {
 
   // Render different pages based on current route
   if (currentPage === 'dashboard') {
-    return <Dashboard />;
+    return (
+      <>
+        <Dashboard />
+        {authService.isAuthenticated() && isAppLoaded && <ChatBot />}
+      </>
+    );
   }
 
   if (currentPage === 'smart_plan') {
-    return <SmartPlan />;
+    return (
+      <>
+        <SmartPlan />
+        {authService.isAuthenticated() && isAppLoaded && <ChatBot />}
+      </>
+    );
   }
 
   if (currentPage === 'pomodoro') {
-    return <Pomodoro />;
+    return (
+      <>
+        <Pomodoro />
+        {authService.isAuthenticated() && isAppLoaded && <ChatBot />}
+      </>
+    );
   }
 
   if (currentPage === 'callback') {
@@ -88,8 +107,6 @@ function App() {
         onClose={handleCloseModal}
         initialMode="signup"
       />
-      
-      <ChatBot />
     </div>
   );
 }
