@@ -9,7 +9,14 @@ export default defineConfig({
       '/api': {
         target: 'https://s89-chethan-capstone-procrastinot-1.onrender.com',
         changeOrigin: true,
-        secure: true
+        secure: false,
+        timeout: 10000,
+        proxyTimeout: 10000,
+        configure: (proxy, options) => {
+          proxy.on('error', (err, req, res) => {
+            console.log('Proxy error:', err.message);
+          });
+        }
       }
     }
   }
