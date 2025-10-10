@@ -1,3 +1,5 @@
+import prewarmService from './prewarmService';
+
 const API_BASE_URL = '/api';
 
 class AuthService {
@@ -37,6 +39,9 @@ class AuthService {
 
   // Register user
   async register(userData) {
+    // Prewarm backend before registration
+    await prewarmService.prewarmBeforeOperation();
+    
     try {
       const response = await fetch(`${API_BASE_URL}/users/register`, {
         method: 'POST',
@@ -65,6 +70,9 @@ class AuthService {
 
   // Login user
   async login(credentials) {
+    // Prewarm backend before login
+    await prewarmService.prewarmBeforeOperation();
+    
     try {
       const response = await fetch(`${API_BASE_URL}/users/login`, {
         method: 'POST',
@@ -118,6 +126,9 @@ class AuthService {
 
   // Get user profile
   async getUserProfile() {
+    // Prewarm backend before profile fetch
+    await prewarmService.prewarmBeforeOperation();
+    
     try {
       const response = await fetch(`${API_BASE_URL}/users/profile/${this.userId}`, {
         headers: this.getAuthHeaders()

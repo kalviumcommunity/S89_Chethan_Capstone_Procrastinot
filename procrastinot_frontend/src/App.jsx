@@ -10,6 +10,7 @@ import AuthModal from './components/AuthModal/AuthModal';
 import Dashboard from './components/Dashboard/Dashboard';
 import AuthCallback from './components/AuthCallback/AuthCallback';
 import authService from './services/authService';
+import prewarmService from './services/prewarmService';
 import './index.css';
 import SmartPlan from './components/SmartPlan/SmartPlan';
 import Pomodoro from './components/Pomodoro/Pomodoro';
@@ -47,6 +48,10 @@ function App() {
     };
 
     window.addEventListener('openAuthModal', handleOpenAuthModal);
+
+    // Initialize backend prewarming
+    prewarmService.initialPrewarm();
+    prewarmService.startPeriodicPrewarm();
 
     // Mark app as loaded after initial setup
     setTimeout(() => setIsAppLoaded(true), 500);
