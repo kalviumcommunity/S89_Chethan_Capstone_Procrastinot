@@ -30,6 +30,7 @@ router.use("/challenges", require("./get-routes/challengeRoutes"));
 router.use("/pomodoro", require("./get-routes/pomodoroRoutes"));
 router.use("/chatbot", require("./get-routes/chatbotRoutes"));
 router.use("/quiz", require("./get-routes/quizRoutes"));
+router.use("/eduspace", require("./get-routes/eduSpaceRoutes"));
 router.use("/utils", require("./get-routes/utilsRoutes"));
 
 // ✅ Authenticated POST Routes
@@ -41,6 +42,7 @@ router.use("/challenges", require("./post-route/challengeRoutes"));
 router.use("/pomodoro", require("./post-route/pomodoroRoutes"));
 router.use("/chatbot", require("./post-route/chatbotRoutes"));
 router.use("/quiz", require("./post-route/quizRoutes"));
+router.use("/eduspace", require("./post-route/eduSpaceRoutes"));
 
 // ✅ Authenticated PUT Routes
 router.use("/users", require("./put-routes/userRoutes"));
