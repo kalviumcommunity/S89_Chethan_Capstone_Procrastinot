@@ -39,19 +39,24 @@ router.post('/generate', async (req, res) => {
     console.log('Generating content for technology:', technology);
     
     const result = await model.generateContent(prompt);
-    const content = result.response.text();
+    const response = await result.response;
+    const content = response.text();
     
-    console.log('Content generated successfully');
+    console.log('Content generated successfully, length:', content.length);
     res.set('Content-Type', 'text/plain');
     res.send(content);
   } catch (error) {
-    console.error('Content generation error:', error);
-    if (error.message?.includes('quota')) {
+    console.error('Content generation error details:');
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    console.error('Full error:', error);
+    
+    if (error.message?.includes('quota') || error.message?.includes('QUOTA')) {
       res.status(429).json({ error: 'API quota exceeded. Please try again later.' });
-    } else if (error.message?.includes('API key')) {
+    } else if (error.message?.includes('API key') || error.message?.includes('INVALID_API_KEY')) {
       res.status(401).json({ error: 'Invalid API key configuration' });
     } else {
-      res.status(500).json({ error: 'Failed to generate content. Please try again.' });
+      res.status(500).json({ error: `Content generation failed: ${error.message}` });
     }
   }
 });
