@@ -1,11 +1,28 @@
-Here’s your **final, polished version of the Procrastinot README** — clean, professional, recruiter-friendly, and ready for your GitHub repo 👇
-
----
-
 # 🥋 **Procrastinot — Make Focus Automatic**
 
 **Procrastinot** is a full-stack productivity web app that helps users beat procrastination using task management, timed focus sessions (Pomodoro), mood tracking, micro-challenges, and skill-progress tracking.
 It blends behavioral science with practical productivity tools — helping users move from *intention* to *action*.
+
+---
+
+## 🖼️ Screenshots
+
+The following screenshots are included in the repository root (no additional upload needed). If you'd prefer a dedicated folder, move them to `docs/screenshots/` and update the links.
+
+<div align="center">
+
+
+![Landing hero (1)](docs/screenshots/Screenshot%202025-10-13%20162318.png "Landing hero")
+
+![Sign up modal (2)](docs/screenshots/Screenshot%202025-10-13%20162451.png "Sign up modal")
+
+![Logged-in hero (3)](docs/screenshots/Screenshot%202025-10-13%20162531.png "Logged-in hero")
+
+![Main features grid (4)](docs/screenshots/Screenshot%202025-10-13%20162600.png "Features grid")
+
+![Cards overview (5)](docs/screenshots/Screenshot%202025-10-13%20162633.png "Cards overview")
+
+</div>
 
 ---
 
