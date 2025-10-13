@@ -1,5 +1,5 @@
 // Prewarm service to keep Render backend active
-const BACKEND_URL = 'https://s89-chethan-capstone-procrastinot.vercel.app';
+const BACKEND_URL = 'https://s89-chethan-capstone-procrastinot-1.onrender.com';
 
 class PrewarmService {
   constructor() {

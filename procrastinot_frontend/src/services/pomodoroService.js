@@ -1,7 +1,7 @@
 import authService from './authService';
 
 // Duplicate base URL to avoid coupling to authService internals
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://s89-chethan-capstone-procrastinot-1.onrender.com/api';
 
 const withAuthHeaders = () => authService.getAuthHeaders();
 
