@@ -48,6 +48,9 @@ app.use(passport.initialize());
 // 🔹 Health-check route
 app.get("/", (req, res) => res.status(200).json({ message: "🚀 Server is running!" }));
 
+// 🔹 Favicon route to prevent 404 errors
+app.get("/favicon.ico", (req, res) => res.status(204).end());
+
 // 🔹 Mount all API feature routes
 app.use("/api", allRoutes);
 
