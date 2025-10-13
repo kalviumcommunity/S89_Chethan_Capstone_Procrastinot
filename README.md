@@ -28,7 +28,7 @@ The following screenshots are included in the repository root (no additional upl
 
 ## 🚀 Quick Summary (for Recruiters)
 
-* **Tech stack:** Node.js, Express, MongoDB (Mongoose), React + Vite, JWT + Passport (Google OAuth), Nodemailer, date-fns, bcryptjs, dotenv.
+* **Tech stack:** Node.js, Express, MongoDB (Mongoose), React + Vite, JWT + Passport (Google OAuth),Gemini API, Nodemailer, date-fns, bcryptjs, dotenv.
 * **Problem solved:** Helps students, freelancers, and knowledge workers stay consistent by combining task planning, Pomodoro sessions, mood logging, and challenges.
 * **Impact:** Personal productivity booster with analytics-ready logs, scheduled email reminders, and test-ready APIs for easy evaluation.
 * **Learning outcome:** Built secure JWT + OAuth flows, email schedulers, and resilient Express APIs — applying production-grade Node + React patterns.
