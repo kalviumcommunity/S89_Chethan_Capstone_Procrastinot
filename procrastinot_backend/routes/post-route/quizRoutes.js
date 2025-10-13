@@ -1,15 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
 const Quiz = require('../../models/Quiz');
 
-if (!process.env.OPENAI_API_KEY) {
-  console.error('OPENAI_API_KEY environment variable is required');
+if (!process.env.GEMINI_API_KEY) {
+  console.error('GEMINI_API_KEY environment variable is required');
 }
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY
-});
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
 
 // Generate new quiz
 router.post('/generate', async (req, res) => {
@@ -17,8 +16,8 @@ router.post('/generate', async (req, res) => {
     const { topic } = req.body;
     if (!topic) return res.status(400).json({ error: 'Topic is required' });
 
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    if (!process.env.GEMINI_API_KEY) {
+      return res.status(500).json({ error: 'Gemini API key not configured' });
     }
 
     const prompt = `Create a 5-question multiple choice quiz about "${topic}". 
@@ -36,21 +35,15 @@ router.post('/generate', async (req, res) => {
 
     console.log('Generating quiz for topic:', topic);
     
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [{ role: "user", content: prompt }],
-      temperature: 0.7,
-      max_tokens: 1500
-    });
-
-    const responseContent = completion.choices[0].message.content;
-    console.log('OpenAI response:', responseContent);
+    const result = await model.generateContent(prompt);
+    const responseContent = result.response.text();
+    console.log('Gemini response:', responseContent);
     
     let quizData;
     try {
       quizData = JSON.parse(responseContent);
     } catch (parseError) {
-      console.error('Failed to parse OpenAI response:', parseError);
+      console.error('Failed to parse Gemini response:', parseError);
       return res.status(500).json({ error: 'Invalid response from AI service' });
     }
 
@@ -81,9 +74,9 @@ router.post('/generate', async (req, res) => {
     res.json(safeQuiz);
   } catch (error) {
     console.error('Quiz generation error:', error);
-    if (error.code === 'insufficient_quota') {
+    if (error.message?.includes('quota')) {
       res.status(429).json({ error: 'API quota exceeded. Please try again later.' });
-    } else if (error.code === 'invalid_api_key') {
+    } else if (error.message?.includes('API key')) {
       res.status(401).json({ error: 'Invalid API key configuration' });
     } else {
       res.status(500).json({ error: 'Failed to generate quiz. Please try again.' });
