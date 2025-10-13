@@ -78,32 +78,79 @@ const DashboardPage = ({
       <section className={styles.dashboardFeatures}>
         <div className="container">
           <div className={styles.featuresGrid}>
-            <div className={styles.featureCard} onClick={() => { window.location.href = '/smart-plan'; }}>
+            <div className={`${styles.featureCard} ${styles.modernCard}`} onClick={() => { window.location.href = '/smart-plan'; }}>
+              <div className={styles.cardBackground}></div>
               <div className={styles.featureIcon}>
                 <PlanIcon width={32} height={32} color="#DC2626" />
               </div>
               <h3 className={styles.featureTitle}>Smart Plan</h3>
+              <p className={styles.featureDesc}>Organize tasks with intelligent planning</p>
+              <div className={styles.cardParticles}>
+                <div className={styles.particle}></div>
+                <div className={styles.particle}></div>
+                <div className={styles.particle}></div>
+              </div>
             </div>
             
-            <div className={styles.featureCard} onClick={() => { window.location.href = '/pomodoro'; }}>
+            <div className={`${styles.featureCard} ${styles.modernCard}`} onClick={() => { window.location.href = '/pomodoro'; }}>
+              <div className={styles.cardBackground}></div>
               <div className={styles.featureIcon}>
                 <TimerIcon width={32} height={32} color="#DC2626" />
               </div>
               <h3 className={styles.featureTitle}>Pomodoro</h3>
-            </div>
-            
-            <div className={styles.featureCard}>
-              <div className={styles.featureIcon}>
-                <SkillsIcon width={32} height={32} color="#DC2626" />
+              <p className={styles.featureDesc}>Focus sessions with mood tracking</p>
+              <div className={styles.cardParticles}>
+                <div className={styles.particle}></div>
+                <div className={styles.particle}></div>
+                <div className={styles.particle}></div>
               </div>
-              <h3 className={styles.featureTitle}>Skills</h3>
             </div>
             
-            <div className={styles.featureCard}>
+            <div className={`${styles.featureCard} ${styles.modernCard}`} onClick={() => { window.location.href = '/eduspace'; }}>
+              <div className={styles.cardBackground}></div>
               <div className={styles.featureIcon}>
                 <ChallengeIcon width={32} height={32} color="#DC2626" />
               </div>
-              <h3 className={styles.featureTitle}>Daily Challenges</h3>
+              <h3 className={styles.featureTitle}>EduSpace</h3>
+              <p className={styles.featureDesc}>AI-powered learning experiences</p>
+              <div className={styles.cardParticles}>
+                <div className={styles.particle}></div>
+                <div className={styles.particle}></div>
+                <div className={styles.particle}></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section className={styles.aiSection}>
+        <div className="container">
+          <div className={styles.aiHeader}>
+            <h2 className={styles.aiTitle}>🤖 AI-Powered Productivity</h2>
+            <p className={styles.aiSubtitle}>Experience the future of productivity with intelligent assistance</p>
+          </div>
+          
+          <div className={styles.aiGrid}>
+            <div className={styles.aiCard}>
+              <div className={styles.aiIcon}>💬</div>
+              <h3>Smart ChatBot</h3>
+              <p>Get instant answers, productivity tips, and personalized guidance powered by advanced AI</p>
+              <div className={styles.aiFeatures}>
+                <span>• Real-time assistance</span>
+                <span>• Context-aware responses</span>
+                <span>• Learning recommendations</span>
+              </div>
+            </div>
+            
+            <div className={styles.aiCard}>
+              <div className={styles.aiIcon}>📚</div>
+              <h3>EduSpace AI</h3>
+              <p>Comprehensive learning content generated dynamically for 140+ technologies and concepts</p>
+              <div className={styles.aiFeatures}>
+                <span>• Personalized content</span>
+                <span>• Interactive learning</span>
+                <span>• Up-to-date information</span>
+              </div>
             </div>
           </div>
         </div>

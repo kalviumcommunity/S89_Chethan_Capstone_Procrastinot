@@ -9,22 +9,29 @@ const navigationItems = [
   { id: 'home', label: 'Home', icon: HomeIcon },
   { id: 'smart_plan', label: 'Smart Plan', icon: PlanIcon },
   { id: 'pomodoro', label: 'Pomodoro', icon: TimerIcon },
-  { id: 'skills', label: 'Skills', icon: SkillsIcon },
-  { id: 'daily_challenges', label: 'Daily Challenges', icon: ChallengeIcon }
+  { id: 'eduspace', label: 'EduSpace', icon: ChallengeIcon }
 ];
 
 const NavigationMenu = ({ activeItem, onNavigate }) => {
   const handleClick = (id) => {
     if (id === 'smart_plan') {
-      window.location.href = '/smart-plan';
+      window.history.pushState({}, '', '/smart-plan');
+      window.location.reload();
       return;
     }
     if (id === 'pomodoro') {
-      window.location.href = '/pomodoro';
+      window.history.pushState({}, '', '/pomodoro');
+      window.location.reload();
       return;
     }
     if (id === 'home') {
-      window.location.href = '/dashboard';
+      window.history.pushState({}, '', '/dashboard');
+      window.location.reload();
+      return;
+    }
+    if (id === 'eduspace') {
+      window.history.pushState({}, '', '/eduspace');
+      window.location.reload();
       return;
     }
     if (onNavigate) onNavigate(id);

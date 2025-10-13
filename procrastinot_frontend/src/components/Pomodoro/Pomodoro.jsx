@@ -335,12 +335,6 @@ const TaskSelector = ({ tasks, selectedTasks, onTaskToggle, onTaskComplete }) =>
       <div className={styles.taskHeader}>
         <h3>Task List</h3>
         <div className={styles.taskHeaderActions}>
-          <button className={styles.headerActionBtn} title="Edit">
-            ✏️
-          </button>
-          <button className={styles.headerActionBtn} title="Delete">
-            🗑️
-          </button>
         </div>
       </div>
 

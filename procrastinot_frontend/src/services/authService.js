@@ -6,6 +6,7 @@ class AuthService {
   constructor() {
     this.token = localStorage.getItem('token');
     this.userId = localStorage.getItem('userId');
+    console.log('AuthService initialized:', { hasToken: !!this.token, hasUserId: !!this.userId });
   }
 
   // Set authentication data
@@ -26,7 +27,10 @@ class AuthService {
 
   // Check if user is authenticated
   isAuthenticated() {
-    return !!this.token;
+    const hasToken = !!this.token;
+    const hasUserId = !!this.userId;
+    console.log('AuthService - isAuthenticated check:', { hasToken, hasUserId, token: this.token?.substring(0, 10) + '...', userId: this.userId });
+    return hasToken && hasUserId;
   }
 
   // Get auth headers
@@ -126,13 +130,22 @@ class AuthService {
 
   // Get user profile
   async getUserProfile() {
+    if (!this.isAuthenticated()) {
+      throw new Error('Not authenticated');
+    }
+    
     // Prewarm backend before profile fetch
     await prewarmService.prewarmBeforeOperation();
     
     try {
-      const response = await fetch(`${API_BASE_URL}/users/profile/${this.userId}`, {
+      const response = await fetch(`${API_BASE_URL}/users/profile`, {
         headers: this.getAuthHeaders()
       });
+
+      if (response.status === 401) {
+        this.clearAuth();
+        throw new Error('Authentication failed');
+      }
 
       const data = await response.json();
 
@@ -143,6 +156,9 @@ class AuthService {
       // Return the user object from the response
       return data.user || data;
     } catch (error) {
+      if (error.message === 'Authentication failed') {
+        this.clearAuth();
+      }
       throw new Error(error.message || 'Failed to fetch profile');
     }
   }

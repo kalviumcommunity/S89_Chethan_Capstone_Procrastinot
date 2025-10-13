@@ -1,7 +1,10 @@
 .navigationMenu {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
+  justify-content: center;
+  gap: var(--spacing-lg);
+  width: 100%;
+  transform: translateX(-10%);
 }
 
 .navItem {
