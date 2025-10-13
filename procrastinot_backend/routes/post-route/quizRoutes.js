@@ -3,6 +3,10 @@ const router = express.Router();
 const OpenAI = require('openai');
 const Quiz = require('../../models/Quiz');
 
+if (!process.env.OPENAI_API_KEY) {
+  console.error('OPENAI_API_KEY environment variable is required');
+}
+
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
 });
@@ -12,6 +16,10 @@ router.post('/generate', async (req, res) => {
   try {
     const { topic } = req.body;
     if (!topic) return res.status(400).json({ error: 'Topic is required' });
+
+    if (!process.env.OPENAI_API_KEY) {
+      return res.status(500).json({ error: 'OpenAI API key not configured' });
+    }
 
     const prompt = `Create a 5-question multiple choice quiz about "${topic}". 
     Return ONLY a valid JSON object with this structure:
@@ -26,13 +34,30 @@ router.post('/generate', async (req, res) => {
     }
     Make questions engaging and educational. correctAnswer should be the index (0-3) of the correct option.`;
 
+    console.log('Generating quiz for topic:', topic);
+    
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: prompt }],
       temperature: 0.7,
+      max_tokens: 1500
     });
 
-    const quizData = JSON.parse(completion.choices[0].message.content);
+    const responseContent = completion.choices[0].message.content;
+    console.log('OpenAI response:', responseContent);
+    
+    let quizData;
+    try {
+      quizData = JSON.parse(responseContent);
+    } catch (parseError) {
+      console.error('Failed to parse OpenAI response:', parseError);
+      return res.status(500).json({ error: 'Invalid response from AI service' });
+    }
+
+    if (!quizData.questions || !Array.isArray(quizData.questions) || quizData.questions.length !== 5) {
+      console.error('Invalid quiz structure:', quizData);
+      return res.status(500).json({ error: 'Invalid quiz structure received' });
+    }
     
     const quiz = new Quiz({
       userId: req.user.id,
@@ -41,6 +66,7 @@ router.post('/generate', async (req, res) => {
     });
 
     await quiz.save();
+    console.log('Quiz saved successfully:', quiz._id);
     
     // Return quiz without correct answers for frontend
     const safeQuiz = {
@@ -55,7 +81,13 @@ router.post('/generate', async (req, res) => {
     res.json(safeQuiz);
   } catch (error) {
     console.error('Quiz generation error:', error);
-    res.status(500).json({ error: 'Failed to generate quiz' });
+    if (error.code === 'insufficient_quota') {
+      res.status(429).json({ error: 'API quota exceeded. Please try again later.' });
+    } else if (error.code === 'invalid_api_key') {
+      res.status(401).json({ error: 'Invalid API key configuration' });
+    } else {
+      res.status(500).json({ error: 'Failed to generate quiz. Please try again.' });
+    }
   }
 });
 
