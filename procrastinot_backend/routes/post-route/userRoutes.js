@@ -36,15 +36,9 @@ router.get(
       if (!req.user) return res.status(401).json({ message: "Authentication failed" });
 
       const token = generateToken(req.user._id);
-      // Get the origin from the request headers
-      const origin = req.headers.origin || req.headers.referer;
-      let clientBase = 'http://localhost:5173'; // default fallback
       
-      if (origin) {
-        if (origin.includes('devtunnels.ms') || origin.includes('localhost') || origin.includes('127.0.0.1')) {
-          clientBase = origin.replace(/\/$/, ''); // remove trailing slash
-        }
-      }
+      // Use CLIENT_URL from environment or deployed frontend URL
+      const clientBase = process.env.CLIENT_URL || 'https://s89-chethan-capstone-procrastinot.vercel.app';
       
       console.log('OAuth redirecting to client:', clientBase);
       res.redirect(`${clientBase}/auth/callback?token=${token}`);
