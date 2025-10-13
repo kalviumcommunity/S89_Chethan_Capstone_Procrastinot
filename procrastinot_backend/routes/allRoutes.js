@@ -29,6 +29,7 @@ router.use("/moods", require("./get-routes/moodRoutes"));
 router.use("/challenges", require("./get-routes/challengeRoutes"));
 router.use("/pomodoro", require("./get-routes/pomodoroRoutes"));
 router.use("/chatbot", require("./get-routes/chatbotRoutes"));
+router.use("/quiz", require("./get-routes/quizRoutes"));
 router.use("/utils", require("./get-routes/utilsRoutes"));
 
 // ✅ Authenticated POST Routes
@@ -39,6 +40,7 @@ router.use("/moods", require("./post-route/moodRoutes"));
 router.use("/challenges", require("./post-route/challengeRoutes"));
 router.use("/pomodoro", require("./post-route/pomodoroRoutes"));
 router.use("/chatbot", require("./post-route/chatbotRoutes"));
+router.use("/quiz", require("./post-route/quizRoutes"));
 
 // ✅ Authenticated PUT Routes
 router.use("/users", require("./put-routes/userRoutes"));
