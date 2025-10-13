@@ -1,6 +1,6 @@
 import prewarmService from './prewarmService';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://s89-chethan-capstone-procrastinot.vercel.app/api';
 
 class AuthService {
   constructor() {

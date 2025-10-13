@@ -1,5 +1,5 @@
 // Prewarm service to keep Render backend active
-const BACKEND_URL = 'https://s89-chethan-capstone-procrastinot-1.onrender.com';
+const BACKEND_URL = 'https://s89-chethan-capstone-procrastinot.vercel.app';
 
 class PrewarmService {
   constructor() {
@@ -15,7 +15,7 @@ class PrewarmService {
     console.log('🔥 Prewarming backend...');
     
     try {
-      await fetch(`${BACKEND_URL}/api/health`, {
+      await fetch(`${BACKEND_URL}/`, {
         method: 'GET',
         mode: 'cors'
       }).catch(() => {});
@@ -32,7 +32,7 @@ class PrewarmService {
   startPeriodicPrewarm() {
     // Ping every 10 minutes to keep server active
     this.prewarmInterval = setInterval(() => {
-      fetch(`${BACKEND_URL}/api/health`).catch(() => {});
+      fetch(`${BACKEND_URL}/`).catch(() => {});
     }, 10 * 60 * 1000);
   }
 
@@ -47,7 +47,7 @@ class PrewarmService {
   // Prewarm before critical operations
   async prewarmBeforeOperation() {
     try {
-      await fetch(`${BACKEND_URL}/api/health`, {
+      await fetch(`${BACKEND_URL}/`, {
         method: 'GET',
         timeout: 5000
       }).catch(() => {});

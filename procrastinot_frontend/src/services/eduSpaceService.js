@@ -1,6 +1,6 @@
 import authService from './authService';
 
-const API_BASE_URL = '/api';
+const API_BASE_URL = 'https://s89-chethan-capstone-procrastinot.vercel.app/api';
 
 const eduSpaceService = {
   async generateContent(technology) {
