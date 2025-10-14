@@ -1,5 +1,5 @@
 // Prewarm service to keep Render backend active
-const BACKEND_URL = 'https://s89-chethan-capstone-procrastinot-1.onrender.com';
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL?.replace('/api', '') || 'https://s89-chethan-capstone-procrastinot-1.onrender.com';
 
 class PrewarmService {
   constructor() {

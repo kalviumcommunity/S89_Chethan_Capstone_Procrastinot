@@ -13,6 +13,7 @@ const EduSpace = () => {
   const [contentLoading, setContentLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredCards, setFilteredCards] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
 
   const techCards = [
     { id: 'python', name: 'Python', icon: '🐍', category: 'Programming' },
@@ -157,6 +158,18 @@ const EduSpace = () => {
     { id: 'os', name: 'Operating Systems', icon: '💻', category: 'Computer Science' }
   ];
 
+  // Group cards by category for better organization
+  const getCardsByCategory = () => {
+    const grouped = {};
+    techCards.forEach(card => {
+      if (!grouped[card.category]) {
+        grouped[card.category] = [];
+      }
+      grouped[card.category].push(card);
+    });
+    return grouped;
+  };
+
   useEffect(() => {
     const initializeEduSpace = async () => {
       try {
@@ -181,12 +194,23 @@ const EduSpace = () => {
   }, []);
 
   useEffect(() => {
-    const filtered = techCards.filter(card => 
-      card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      card.category.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    let filtered = techCards;
+    
+    if (selectedCategory !== 'All') {
+      filtered = filtered.filter(card => card.category === selectedCategory);
+    }
+    
+    if (searchTerm) {
+      filtered = filtered.filter(card => 
+        card.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        card.category.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    
     setFilteredCards(filtered);
-  }, [searchTerm]);
+  }, [searchTerm, selectedCategory]);
+
+  const categories = ['All', ...new Set(techCards.map(card => card.category))];
 
   const handleCardClick = async (tech) => {
     setSelectedTech(tech);
@@ -251,79 +275,165 @@ const EduSpace = () => {
         {currentView === 'cards' && (
           <>
             <div className={styles.header}>
-              <h1>EduSpace</h1>
-              <p>Explore and master the latest technologies with AI-powered learning</p>
+              <div className={styles.heroSection}>
+                <h1 className={styles.heroTitle}>🎓 EduSpace</h1>
+                <p className={styles.heroSubtitle}>Master cutting-edge technologies with AI-powered learning experiences</p>
+              </div>
               
-              <div className={styles.searchContainer}>
-                <input
-                  type="text"
-                  placeholder="🔍 Search technologies, categories..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className={styles.searchInput}
-                />
+              <div className={styles.controlsSection}>
+                <div className={styles.searchContainer}>
+                  <input
+                    type="text"
+                    placeholder="🔍 Search technologies, frameworks, tools..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className={styles.searchInput}
+                  />
+                </div>
+                
+                <div className={styles.categoryFilter}>
+                  {categories.map((category) => (
+                    <button
+                      key={category}
+                      className={`${styles.categoryButton} ${selectedCategory === category ? styles.active : ''}`}
+                      onClick={() => setSelectedCategory(category)}
+                    >
+                      {category}
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
 
-            <div className={styles.cardsGrid}>
-              {filteredCards.map((tech) => (
-                <div 
-                  key={tech.id} 
-                  className={styles.techCard}
-                  onClick={() => handleCardClick(tech)}
-                >
-                  <div className={styles.cardIcon}>{tech.icon}</div>
-                  <h3>{tech.name}</h3>
-                  <p className={styles.category}>{tech.category}</p>
-                  <div className={styles.learnButton}>Learn More</div>
-                </div>
-              ))}
+            <div className={styles.statsSection}>
+              <div className={styles.statCard}>
+                <span className={styles.statNumber}>{filteredCards.length}</span>
+                <span className={styles.statLabel}>Technologies</span>
+              </div>
+              <div className={styles.statCard}>
+                <span className={styles.statNumber}>{categories.length - 1}</span>
+                <span className={styles.statLabel}>Categories</span>
+              </div>
+              <div className={styles.statCard}>
+                <span className={styles.statNumber}>∞</span>
+                <span className={styles.statLabel}>Possibilities</span>
+              </div>
+            </div>
+
+            <div className={styles.cardsContainer}>
+              {categories.slice(1).map((category) => {
+                const categoryCards = filteredCards.filter(card => card.category === category);
+                if (categoryCards.length === 0) return null;
+                
+                return (
+                  <div key={category} className={styles.categorySection}>
+                    <h2 className={styles.categoryTitle}>{category}</h2>
+                    <div className={styles.cardsGrid}>
+                      {categoryCards.map((tech, index) => (
+                        <div 
+                          key={tech.id} 
+                          className={styles.techCard}
+                          onClick={() => handleCardClick(tech)}
+                          style={{ animationDelay: `${index * 0.1}s` }}
+                        >
+                          <div className={styles.cardHeader}>
+                            <div className={styles.cardIcon}>{tech.icon}</div>
+                            <div className={styles.cardBadge}>{tech.category}</div>
+                          </div>
+                          <div className={styles.cardContent}>
+                            <h3 className={styles.cardTitle}>{tech.name}</h3>
+                            <div className={styles.cardFooter}>
+                              <span className={styles.learnButton}>Explore →</span>
+                            </div>
+                          </div>
+                          <div className={styles.cardGlow}></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </>
         )}
 
         {currentView === 'content' && (
           <div className={styles.contentView}>
-            <button className={styles.backButton} onClick={handleBackToCards}>
-              ← Back to Technologies
-            </button>
+            <div className={styles.contentHeader}>
+              <button className={styles.backButton} onClick={handleBackToCards}>
+                <span className={styles.backIcon}>←</span>
+              </button>
+            </div>
             
             <div className={styles.paperContainer}>
               <div className={styles.paper}>
                 <div className={styles.paperHeader}>
-                  <span className={styles.techIcon}>{selectedTech?.icon}</span>
-                  <h2>{selectedTech?.name}</h2>
+                  <div className={styles.techInfo}>
+                    <span className={styles.techIcon}>{selectedTech?.icon}</span>
+                    <div className={styles.techDetails}>
+                      <h2 className={styles.techName}>{selectedTech?.name}</h2>
+                      <span className={styles.techCategory}>{selectedTech?.category}</span>
+                    </div>
+                  </div>
+                  <div className={styles.paperMeta}>
+                    <span className={styles.aiGenerated}>🤖 AI Generated</span>
+                  </div>
                 </div>
                 
                 <div className={styles.paperContent}>
                   {contentLoading ? (
                     <div className={styles.contentLoading}>
-                      <div className={styles.typewriter}>Generating content...</div>
+                      <div className={styles.loadingSpinner}></div>
+                      <div className={styles.typewriter}>Crafting your learning experience...</div>
                     </div>
                   ) : content ? (
                     <div className={styles.contentText}>
                       {content.split('\n').filter(p => p.trim()).map((paragraph, index) => {
                         let cleanText = paragraph
-                          .replace(/^#+\s*/, '') // Remove headers
-                          .replace(/\*\*(.*?)\*\*/g, '$1') // Remove bold
-                          .replace(/\*(.*?)\*/g, '$1') // Remove italic
-                          .replace(/^-\s*/, '• ') // Convert dashes to bullets
-                          .replace(/^\d+\.\s*/, '') // Remove numbered lists
+                          .replace(/^#+\s*/, '')
+                          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                          .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                          .replace(/^-\s*/, '• ')
+                          .replace(/^\d+\.\s*/, '')
                           .trim();
                         
-                        if (cleanText.toLowerCase().includes('introduction')) cleanText = '📚 ' + cleanText;
-                        else if (cleanText.toLowerCase().includes('getting started')) cleanText = '🚀 ' + cleanText;
-                        else if (cleanText.toLowerCase().includes('features')) cleanText = '⭐ ' + cleanText;
-                        else if (cleanText.toLowerCase().includes('best practices')) cleanText = '💡 ' + cleanText;
-                        else if (cleanText.toLowerCase().includes('advanced')) cleanText = '🔥 ' + cleanText;
-                        else if (cleanText.toLowerCase().includes('resources')) cleanText = '📖 ' + cleanText;
+                        let className = styles.paragraph;
+                        let icon = '';
                         
-                        return <p key={index}>{cleanText}</p>;
+                        if (cleanText.toLowerCase().includes('introduction')) {
+                          icon = '📚';
+                          className = `${styles.paragraph} ${styles.introduction}`;
+                        } else if (cleanText.toLowerCase().includes('getting started')) {
+                          icon = '🚀';
+                          className = `${styles.paragraph} ${styles.gettingStarted}`;
+                        } else if (cleanText.toLowerCase().includes('features')) {
+                          icon = '⭐';
+                          className = `${styles.paragraph} ${styles.features}`;
+                        } else if (cleanText.toLowerCase().includes('best practices')) {
+                          icon = '💡';
+                          className = `${styles.paragraph} ${styles.bestPractices}`;
+                        } else if (cleanText.toLowerCase().includes('advanced')) {
+                          icon = '🔥';
+                          className = `${styles.paragraph} ${styles.advanced}`;
+                        } else if (cleanText.toLowerCase().includes('resources')) {
+                          icon = '📖';
+                          className = `${styles.paragraph} ${styles.resources}`;
+                        }
+                        
+                        return (
+                          <div key={index} className={className}>
+                            {icon && <span className={styles.sectionIcon}>{icon}</span>}
+                            <p dangerouslySetInnerHTML={{ __html: cleanText }}></p>
+                          </div>
+                        );
                       })}
                     </div>
                   ) : (
                     <div className={styles.contentText}>
-                      <p>No content available. Please try again.</p>
+                      <div className={styles.errorMessage}>
+                        <span className={styles.errorIcon}>⚠️</span>
+                        <p>Content unavailable. Please try again.</p>
+                      </div>
                     </div>
                   )}
                 </div>

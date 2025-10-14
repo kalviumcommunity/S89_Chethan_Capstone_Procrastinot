@@ -1,6 +1,6 @@
 import authService from './authService';
 
-const API_BASE_URL = 'https://s89-chethan-capstone-procrastinot-1.onrender.com/api';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'https://s89-chethan-capstone-procrastinot-1.onrender.com/api';
 
 const quizService = {
 
