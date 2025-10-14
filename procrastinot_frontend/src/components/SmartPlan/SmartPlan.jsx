@@ -132,7 +132,7 @@ const TaskForm = ({ onAdd }) => {
   );
 };
 
-const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete }) => {
+const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit }) => {
   const completed = task.status === 'Completed';
   return (
     <div className={`${styles.taskItem} ${styles.card}`}>
@@ -172,6 +172,9 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete }) => {
         >
           ★
         </button>
+        {onEdit && (
+          <button className={styles.iconBtn} title="Edit" onClick={() => onEdit(task)}>✏️</button>
+        )}
         <button className={styles.iconBtn} title="Delete" onClick={() => onDelete(task)}>🗑</button>
       </div>
     </div>
@@ -218,7 +221,7 @@ const CalendarGrid = ({ tasks, currentMonth, onSelectDate }) => {
           >
             {day && (
               <div className={styles.calendarDay}>
-                <div className={styles.calendarDate}><span>{day.getDate()}</span>{dayTasks.length > 0 && (<span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'var(--color-primary)', display: 'inline-block', marginLeft: 6 }} />)}</div>
+                <div className={styles.calendarDate}><span>{day.getDate()}</span>{dayTasks.length > 0 && (<span style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: 'white', display: 'inline-block', marginLeft: 6 }} />)}</div>
                               </div>
             )}
           </div>
@@ -237,6 +240,8 @@ const SmartPlan = () => {
   const [showModal, setShowModal] = useState(false);
   const [modalDate, setModalDate] = useState(null);
   const [modalTasks, setModalTasks] = useState([]);
+  const [editingTask, setEditingTask] = useState(null);
+  const [editForm, setEditForm] = useState({});
 
   useEffect(() => {
     const init = async () => {
@@ -267,6 +272,33 @@ const SmartPlan = () => {
     setShowModal(true);
   };
 
+  const handleEdit = (task) => {
+    setEditingTask(task._id);
+    setEditForm({
+      title: task.title,
+      description: task.description || '',
+      dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
+      isImportant: task.isImportant,
+      importantLinks: task.importantLinks || ['']
+    });
+  };
+
+  const handleSaveEdit = async (taskId) => {
+    try {
+      const updated = await taskService.updateTask(taskId, editForm);
+      setTasks(prev => prev.map(t => t._id === taskId ? updated : t));
+      setModalTasks(prev => prev.map(t => t._id === taskId ? updated : t));
+      setEditingTask(null);
+    } catch (e) {
+      alert(e.message || 'Failed to update task');
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTask(null);
+    setEditForm({});
+  };
+
   const handleAddTask = async (payload) => {
     try {
       const created = await taskService.createTask(payload);
@@ -282,6 +314,7 @@ const SmartPlan = () => {
     try {
       const updated = await taskService.updateTask(task._id, { isImportant: !task.isImportant });
       setTasks((prev) => prev.map((t) => (t._id === task._id ? updated : t)));
+      setModalTasks((prev) => prev.map((t) => (t._id === task._id ? updated : t)));
     } catch (e) {
       alert(e.message || 'Failed to update task');
     }
@@ -292,6 +325,7 @@ const SmartPlan = () => {
       const nextStatus = task.status === 'Completed' ? 'Pending' : 'Completed';
       const updated = await taskService.updateTask(task._id, { status: nextStatus, completedAt: nextStatus === 'Completed' ? new Date().toISOString() : null });
       setTasks((prev) => prev.map((t) => (t._id === task._id ? updated : t)));
+      setModalTasks((prev) => prev.map((t) => (t._id === task._id ? updated : t)));
     } catch (e) {
       alert(e.message || 'Failed to update task');
     }
@@ -301,6 +335,7 @@ const SmartPlan = () => {
     try {
       await taskService.deleteTask(task._id);
       setTasks((prev) => prev.filter((t) => t._id !== task._id));
+      setModalTasks((prev) => prev.filter((t) => t._id !== task._id));
     } catch (e) {
       alert(e.message || 'Failed to delete task');
     }
@@ -346,13 +381,54 @@ const SmartPlan = () => {
               <div className={styles.empty}>No tasks yet.</div>
             ) : (
               filteredTasks.map((t) => (
-                <TaskItem
-                  key={t._id}
-                  task={t}
-                  onToggleImportant={handleToggleImportant}
-                  onToggleComplete={handleToggleComplete}
-                  onDelete={handleDelete}
-                />
+                editingTask === t._id ? (
+                  <div key={t._id} className={`${styles.taskItem} ${styles.card}`}>
+                    <div style={{ flex: 1 }}>
+                      <input
+                        className={styles.input}
+                        value={editForm.title}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                        placeholder="Task title"
+                      />
+                      <input
+                        className={styles.input}
+                        value={editForm.description}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                        placeholder="Description"
+                        style={{ marginTop: '8px' }}
+                      />
+                      <div style={{ display: 'flex', gap: '8px', marginTop: '8px', alignItems: 'center' }}>
+                        <input
+                          className={styles.input}
+                          type="date"
+                          value={editForm.dueDate}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                        />
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'white' }}>
+                          <input
+                            type="checkbox"
+                            checked={editForm.isImportant}
+                            onChange={(e) => setEditForm(prev => ({ ...prev, isImportant: e.target.checked }))}
+                          />
+                          Important
+                        </label>
+                      </div>
+                    </div>
+                    <div className={styles.taskActions}>
+                      <button className={styles.iconBtn} onClick={() => handleSaveEdit(t._id)}>✅</button>
+                      <button className={styles.iconBtn} onClick={handleCancelEdit}>❌</button>
+                    </div>
+                  </div>
+                ) : (
+                  <TaskItem
+                    key={t._id}
+                    task={t}
+                    onToggleImportant={handleToggleImportant}
+                    onToggleComplete={handleToggleComplete}
+                    onDelete={handleDelete}
+                    onEdit={handleEdit}
+                  />
+                )
               ))
             )}
           </div>
@@ -373,7 +449,7 @@ const SmartPlan = () => {
       {showModal && (
         <div
           className={styles.modalOverlay}
-          onClick={() => setShowModal(false)}
+          onClick={() => { setShowModal(false); setEditingTask(null); }}
           style={{
             position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)',
             backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)',
@@ -387,16 +463,57 @@ const SmartPlan = () => {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--spacing-sm)' }}>
               <div className="heading-md">{modalDate?.toLocaleDateString()}</div>
-              <button className={styles.iconBtn} onClick={() => setShowModal(false)}>✕</button>
+              <button className={styles.iconBtn} onClick={() => { setShowModal(false); setEditingTask(null); }}>✕</button>
             </div>
             {modalTasks.map((t) => (
-              <TaskItem
-                key={t._id}
-                task={t}
-                onToggleImportant={handleToggleImportant}
-                onToggleComplete={handleToggleComplete}
-                onDelete={handleDelete}
-              />
+              editingTask === t._id ? (
+                <div key={t._id} className={`${styles.taskItem} ${styles.card}`}>
+                  <div style={{ flex: 1 }}>
+                    <input
+                      className={styles.input}
+                      value={editForm.title}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, title: e.target.value }))}
+                      placeholder="Task title"
+                    />
+                    <input
+                      className={styles.input}
+                      value={editForm.description}
+                      onChange={(e) => setEditForm(prev => ({ ...prev, description: e.target.value }))}
+                      placeholder="Description"
+                      style={{ marginTop: '8px' }}
+                    />
+                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px', alignItems: 'center' }}>
+                      <input
+                        className={styles.input}
+                        type="date"
+                        value={editForm.dueDate}
+                        onChange={(e) => setEditForm(prev => ({ ...prev, dueDate: e.target.value }))}
+                      />
+                      <label style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'white' }}>
+                        <input
+                          type="checkbox"
+                          checked={editForm.isImportant}
+                          onChange={(e) => setEditForm(prev => ({ ...prev, isImportant: e.target.checked }))}
+                        />
+                        Important
+                      </label>
+                    </div>
+                  </div>
+                  <div className={styles.taskActions}>
+                    <button className={styles.iconBtn} onClick={() => handleSaveEdit(t._id)}>✅</button>
+                    <button className={styles.iconBtn} onClick={handleCancelEdit}>❌</button>
+                  </div>
+                </div>
+              ) : (
+                <TaskItem
+                  key={t._id}
+                  task={t}
+                  onToggleImportant={handleToggleImportant}
+                  onToggleComplete={handleToggleComplete}
+                  onDelete={handleDelete}
+                  onEdit={handleEdit}
+                />
+              )
             ))}
           </div>
         </div>

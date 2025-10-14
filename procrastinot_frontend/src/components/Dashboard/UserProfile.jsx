@@ -46,21 +46,11 @@ const UserProfile = ({ user, onLogout }) => {
         
         {isMenuOpen && (
           <div className={`${styles.dropdownMenu} glass`}>
-            <button className={styles.menuItem}>
-              Profile Settings
-            </button>
-            <button className={styles.menuItem}>
-              Preferences
-            </button>
-            <button className={styles.menuItem}>
-              Help & Support
-            </button>
-            <hr className={styles.menuDivider} />
             <button 
               className={`${styles.menuItem} ${styles.logoutItem}`}
               onClick={handleLogout}
             >
-              Logout
+              🚪 Logout
             </button>
           </div>
         )}

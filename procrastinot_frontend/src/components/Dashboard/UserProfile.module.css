@@ -67,11 +67,14 @@
   position: absolute;
   top: calc(100% + var(--spacing-xs));
   right: 0;
-  min-width: 180px;
+  min-width: 120px;
   padding: var(--spacing-sm);
   border-radius: var(--radius-md);
   z-index: 1000;
   animation: fadeInUp 0.2s ease forwards;
+  background: rgba(0, 0, 0, 0.9);
+  border: 2px solid rgba(220, 38, 38, 0.4);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 20px rgba(220, 38, 38, 0.2);
 }
 
 .menuItem {
@@ -99,11 +102,19 @@
 
 .logoutItem {
   color: var(--color-primary);
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }
 
 .logoutItem:hover {
-  background: rgba(220, 38, 38, 0.1);
+  background: rgba(220, 38, 38, 0.2);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.3);
 }
 
 .menuDivider {
