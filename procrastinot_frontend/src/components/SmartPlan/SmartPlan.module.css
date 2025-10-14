@@ -66,6 +66,11 @@
   color: var(--color-text-primary);
 }
 
+.input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+  cursor: pointer;
+}
+
 .label { color: var(--color-text-secondary); }
 
 .checkboxLabel { display: inline-flex; align-items: center; gap: 0.5rem; color: var(--color-text-secondary); }
