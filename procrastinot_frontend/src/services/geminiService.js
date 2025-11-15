@@ -1,7 +1,7 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Simple and efficient AI service using modern Google GenAI
-const API_KEY = 'AIzaSyAqhS3j8jOA4aHA5bYIYlJcbFNOrkb7T4Y';
+const API_KEY = 'AIzaSyDBqM3Ng0eRN_Tb_CWBAh8DTEUMpsB4Dss';
 
 class GeminiService {
   constructor() {
