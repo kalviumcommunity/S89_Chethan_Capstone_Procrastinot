@@ -85,7 +85,7 @@ async function getUserContext(userId) {
 
 // Enhanced AI response generator with dynamic context
 async function generateAIResponse(message, context) {
-  const GEMINI_API_KEY = 'AIzaSyAqhS3j8jOA4aHA5bYIYlJcbFNOrkb7T4Y';
+  const GEMINI_API_KEY = 'AIzaSyDBqM3Ng0eRN_Tb_CWBAh8DTEUMpsB4Dss';
   const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
 
   // Get user's actual tasks for better context
