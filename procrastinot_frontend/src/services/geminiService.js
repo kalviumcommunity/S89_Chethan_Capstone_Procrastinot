@@ -6,7 +6,7 @@ const API_KEY = 'AIzaSyDBqM3Ng0eRN_Tb_CWBAh8DTEUMpsB4Dss';
 class GeminiService {
   constructor() {
     this.genAI = new GoogleGenerativeAI(API_KEY);
-    this.model = this.genAI.getGenerativeModel({ model: 'gemini-pro' });
+    this.model = this.genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
     this.conversationHistory = [];
     this.isLoading = false;
   }
