@@ -38,7 +38,7 @@ router.get(
       const token = generateToken(req.user._id);
       
       // Use CLIENT_URL from environment or deployed frontend URL
-      const clientBase = process.env.CLIENT_URL || 'https://s89-chethan-capstone-procrastinot.vercel.app';
+      const clientBase = process.env.CLIENT_URL;
       
       console.log('OAuth redirecting to client:', clientBase);
       res.redirect(`${clientBase}/auth/callback?token=${token}`);
