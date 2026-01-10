@@ -40,7 +40,7 @@ function logWarning(message) {
 
 // Test Google OAuth configuration
 async function testGoogleOAuthConfig() {
-  logInfo('🔐 Testing Google OAuth Configuration...');
+  logInfo('🔐 Testing Google OAuth Configuration... for the better performance of the app');
   
   try {
     // Test if Google OAuth route is accessible
